@@ -1206,8 +1206,11 @@
 			<cfset LOCAL.cssDeepColor = "##AA66AA">
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##FFDDFF">
-
-			<cfset LOCAL.columns 		= ARGUMENTS.var.getColumnNames()>
+			<cfif StructKeyExists(server, "lucee")>
+				<cfset LOCAL.columns  = ARGUMENTS.var.ColumnArray()>
+			<cfelse>
+				<cfset LOCAL.columns  = ARGUMENTS.var.getMetaData().getColumnLabels()>
+			</cfif>
 			<cfset LOCAL.columnCount 	= arrayLen(LOCAL.columns)>
 			<cfset LOCAL.len 			= ARGUMENTS.var.recordCount>
 
