@@ -595,113 +595,107 @@
 			<cfset LOCAL.cssSoftColor = "##CCFFCC">
 
 			<cfset LOCAL.subType 	= ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len 		= arrayLen(ARGUMENTS.var)>
 
-			<cfif LOCAL.len>
-
-				<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
-
-				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
-
-					<div class="var array lowkey">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<span class="type">array</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span><br>
-						</div>
-						<div class="row">
-							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-								[references @#encodeForHtml(LOCAL.identity)#]
-							</div>
-						</div>
-					</div>
-
-				<cfelse>
-
-					<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
-
-					<div class="var array">
-
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
-						</div>
-
-						<!--- Byte[] --->
-						<cfif LOCAL.subType eq "[B">
-
-							<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
-
-								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;" data-cf_dump_collapsed>
-										#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
-									</div>
-									<div class="rowcell lowkey hidden" style="border-color: #LOCAL.cssDeepColor#;">
-										<div class="cellcontent">
-											<cftry>
-												#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
-												<cfcatch>
-													[encoding failed]
-												</cfcatch>
-											</cftry>
-										</div>
-									</div>
-								</div>
-
-							</cfloop>
-
-						</cfif>
-
-						<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
-
-							<!--- top (maximum elements) --->
-							<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
-
-								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										#LOCAL.i#
-									</div>
-									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
-										<div class="cellcontent">
-											[top reached]
-										</div>
-									</div>
-								</div>
-
-								<cfbreak>
-
-							</cfif>
-
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									#LOCAL.i#
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
-										#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
-									<cfelse>
-										#renderDump()#
-									</cfif>
-								</div>
-							</div>
-
-							<cfset LOCAL.i++>
-						</cfloop>
-
-					</div>
-
-				</cfif>
-
-			<cfelse>
+			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 				<div class="var array lowkey">
-
 					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-						<span class="type">array [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
+						<span class="type">array</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 					</div>
+					<div class="row">
+						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							[references @#encodeForHtml(LOCAL.identity)#]
+						</div>
+					</div>
+				</div>
 
+			<cfelseif not LOCAL.len>
+
+				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
+
+				<div class="var array lowkey">
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">array [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+					</div>
 					<div class="row">
 						<div class="rowcell empty" style="border-color: #LOCAL.cssDeepColor#;">
 							[empty array]
 						</div>
 					</div>
+				</div>
+
+			<cfelse>
+
+				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
+
+				<div class="var array">
+
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+					</div>
+
+					<!--- Byte[] --->
+					<cfif LOCAL.subType eq "[B">
+
+						<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;" data-cf_dump_collapsed>
+									#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
+								</div>
+								<div class="rowcell lowkey hidden" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="cellcontent">
+										<cftry>
+											#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
+											<cfcatch>
+												[encoding failed]
+											</cfcatch>
+										</cftry>
+									</div>
+								</div>
+							</div>
+
+						</cfloop>
+
+					</cfif>
+
+					<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
+
+						<!--- top (maximum elements) --->
+						<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									#LOCAL.i#
+								</div>
+								<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="cellcontent">
+										[top reached]
+									</div>
+								</div>
+							</div>
+
+							<cfbreak>
+
+						</cfif>
+
+						<div class="row">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								#LOCAL.i#
+							</div>
+							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+								<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
+									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
+								<cfelse>
+									#renderDump()#
+								</cfif>
+							</div>
+						</div>
+
+						<cfset LOCAL.i++>
+					</cfloop>
 
 				</div>
 
@@ -710,7 +704,8 @@
 		<!--- component, object --->
 		<cfelseif isObject(ARGUMENTS.var)>
 
-			<cfset LOCAL.meta = getMetaData(ARGUMENTS.var)>
+			<cfset LOCAL.meta 		= getMetaData(ARGUMENTS.var)>
+			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 
 			<!--- component --->
 			<cfif (
@@ -722,13 +717,11 @@
 				<cfset LOCAL.cssForeColor = "##B6DCE3">
 				<cfset LOCAL.cssSoftColor = "##B6DCE3">
 
-				<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
-
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 					<div class="var component lowkey">
 						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span><br>
+							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span>
 						</div>
 						<div class="row">
 							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
@@ -926,7 +919,6 @@
 
 				<cfset LOCAL.meta 		= ARGUMENTS.var.getClass()>
 				<cfset LOCAL.subType 	= LOCAL.meta.getName()>
-				<cfset LOCAL.identity 	= ARGUMENTS.var.hashCode()>
 
 				<cfset LOCAL.docsLink = "">
 				<cfif find("java.", LOCAL.subType) eq 1>
@@ -1110,87 +1102,28 @@
 			<cfset LOCAL.cssSoftColor = "##CCDDFF">
 
 			<cfset LOCAL.subType 	= ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len 		= structCount(ARGUMENTS.var)>
 
-			<cfif LOCAL.len>
+			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
-				<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
-
-				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
-
-					<div class="var struct lowkey">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<span class="type">struct</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span><br>
-						</div>
-						<div class="row">
-							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-								[references @#encodeForHtml(LOCAL.identity)#]
-							</div>
+				<div class="var struct lowkey">
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">struct</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
+					</div>
+					<div class="row">
+						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							[references @#encodeForHtml(LOCAL.identity)#]
 						</div>
 					</div>
+				</div>
 
-				<cfelse>
-
-					<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
-
-					<div class="var struct">
-
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
-						</div>
-
-						<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
-
-							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
-
-								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										#encodeForHtml(LOCAL.key)#
-									</div>
-									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
-										<div class="cellcontent">
-											[blacklisted]
-										</div>
-									</div>
-								</div>
-
-							<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
-
-								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										#encodeForHtml(LOCAL.key)#
-									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
-									</div>
-								</div>
-
-							<!--- null value --->
-							<cfelse>
-
-								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										#encodeForHtml(LOCAL.key)#
-									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-										#renderDump()#
-									</div>
-								</div>
-
-							</cfif>
-
-						</cfloop>
-
-					</div>
-
-				</cfif>
-
-			<cfelse>
+			<cfelseif not LOCAL.len>
 
 				<div class="var struct lowkey">
 
 					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-						<span class="type">struct [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
+						<span class="type">struct [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 
 					<div class="row">
@@ -1198,6 +1131,60 @@
 							[empty struct]
 						</div>
 					</div>
+
+				</div>
+
+			<cfelse>
+
+				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
+
+				<div class="var struct">
+
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+					</div>
+
+					<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
+
+						<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									#encodeForHtml(LOCAL.key)#
+								</div>
+								<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="cellcontent">
+										[blacklisted]
+									</div>
+								</div>
+							</div>
+
+						<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									#encodeForHtml(LOCAL.key)#
+								</div>
+								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
+								</div>
+							</div>
+
+						<!--- null value --->
+						<cfelse>
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									#encodeForHtml(LOCAL.key)#
+								</div>
+								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									#renderDump()#
+								</div>
+							</div>
+
+						</cfif>
+
+					</cfloop>
 
 				</div>
 
