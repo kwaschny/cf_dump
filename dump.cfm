@@ -930,7 +930,7 @@
 
 				<cfset LOCAL.docsLink = "">
 				<cfif find("java.", LOCAL.subType) eq 1>
-					<cfset LOCAL.docsLink = "https://docs.oracle.com/javase/8/docs/api/#replace(LOCAL.subType, ".", "/", "ALL")#.html">
+					<cfset LOCAL.docsLink = "https://docs.oracle.com/en/java/javase/11/docs/api/java.base/#replace(LOCAL.subType, ".", "/", "ALL")#.html">
 				</cfif>
 
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
