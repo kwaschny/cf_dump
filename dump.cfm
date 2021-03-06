@@ -263,9 +263,14 @@
 				.cf_dump .object .row .rowcell {
 					font-family: Consolas, monospace;
 				}
+					.cf_dump .object .row .rowcell .returns,
+					.cf_dump .object .row .rowcell .type {
+						opacity: 0.50;
+					}
 					.cf_dump .object .row .rowcell .method {
 						color: ##0000FF;
 					}
+					.cf_dump .object .row .rowcell .returns,
 					.cf_dump .object .row .rowcell .params,
 					.cf_dump .object .row .rowcell .type {
 						font-size: 11px;
@@ -954,14 +959,20 @@
 						<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
 
 							<cfset LOCAL.methodSign = []>
-							<cfset LOCAL.params 	= LOCAL.method.getParameterTypes()>
 
+							<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
 							<cfloop array="#LOCAL.params#" index="LOCAL.param">
-								<cfset LOCAL.methodSign.add( LOCAL.param.getName() )>
+
+								<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
+
+								<cfset LOCAL.methodSign.add(
+									encodeForHtml(LOCAL.typeName)
+								)>
+
 							</cfloop>
 
 							<cfset LOCAL.constructors.add(
-								'<span class="method">#listLast(LOCAL.method.getName(), ".")#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>)'
+								'<span class="method">#encodeForHtml( listLast(LOCAL.method.getName(), ".") )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>)'
 							)>
 
 						</cfloop>
@@ -977,8 +988,10 @@
 						<cfset LOCAL.buffer = LOCAL.meta.getFields()>
 						<cfloop array="#LOCAL.buffer#" index="LOCAL.field">
 
+							<cfset LOCAL.fieldType = transformClassName( LOCAL.field.getType().getName() )>
+
 							<cfset LOCAL.fields.add(
-								'<span class="type">#LOCAL.field.getType().getName()#</span> <span class="field">#LOCAL.field.getName()#</span>'
+								'<span class="type">#encodeForHtml(LOCAL.fieldType)#</span> <span class="field">#encodeForHtml( LOCAL.field.getName() )#</span>'
 							)>
 
 						</cfloop>
@@ -994,15 +1007,22 @@
 						<cfset LOCAL.buffer = LOCAL.meta.getMethods()>
 						<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
 
+							<cfset LOCAL.returnType = transformClassName( LOCAL.method.getReturnType().getName() )>
 							<cfset LOCAL.methodSign = []>
-							<cfset LOCAL.params 	= LOCAL.method.getParameterTypes()>
 
+							<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
 							<cfloop array="#LOCAL.params#" index="LOCAL.param">
-								<cfset LOCAL.methodSign.add( LOCAL.param.getName() )>
+
+								<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
+
+								<cfset LOCAL.methodSign.add(
+									encodeForHtml(LOCAL.typeName)
+								)>
+
 							</cfloop>
 
 							<cfset LOCAL.methods.add(
-								'<span class="method">#LOCAL.method.getName()#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>)'
+								'<span class="method">#encodeForHtml( LOCAL.method.getName() )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>) <span class="returns">#encodeForHtml(LOCAL.returnType)#</span>'
 							)>
 
 						</cfloop>
@@ -1286,4 +1306,20 @@
 
 	</cfoutput>
 
+</cffunction>
+
+<cffunction name="transformClassName" accessor="private" output="false" returnType="string">
+
+	<cfargument name="className" type="string" required="true">
+
+	<cfif ARGUMENTS.className does not contain "[">
+		<cfreturn ARGUMENTS.className>
+	</cfif>
+
+	<!--- discard class name encoding --->
+	<cfset ARGUMENTS.className = reReplace(ARGUMENTS.className, "^\[+[BCDFIJLSZ]", "")>
+	<cfset ARGUMENTS.className = reReplace(ARGUMENTS.className, ";$", "")>
+
+	<!--- multidimensional array is treated as one dimensional array --->
+	<cfreturn (ARGUMENTS.className & "[]")>
 </cffunction>
