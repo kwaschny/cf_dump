@@ -450,7 +450,10 @@
 	<cfoutput>
 
 		<!--- null --->
-		<cfif not structKeyExists(ARGUMENTS, "var")>
+		<cfif (
+			(not structKeyExists(ARGUMENTS, "var")) or
+			isNull(ARGUMENTS.var)
+		)>
 
 			<cfset LOCAL.cssDeepColor = "##000000">
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
