@@ -745,8 +745,8 @@
 
 						<!--- ignore default inheritance --->
 						<cfif (
-							(find("WEB-INF", LOCAL.meta.extends.FullName) neq 1) and
-							(find("lucee",   LOCAL.meta.extends.FullName) neq 1)
+							(LOCAL.meta.extends.FullName does not contain "cftags.component") and
+							(LOCAL.meta.extends.FullName does not contain "lucee.Component")
 						)>
 							<cfset LOCAL.extends = LOCAL.meta.extends.FullName>
 						</cfif>
