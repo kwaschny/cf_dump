@@ -276,6 +276,33 @@
 						font-size: 11px;
 					}
 
+				.cf_dump .trace > .rowcell {
+					overflow: auto;
+					white-space: nowrap;
+				}
+
+				.cf_dump .trace .preview {
+					border: 1px solid ##A0A0A0;
+					margin: 8px;
+					padding: 8px;
+				}
+					.cf_dump .trace .preview .block {
+						margin-top: 8px;
+					}
+
+				.cf_dump .trace .exception {
+					font-weight: bold;
+				}
+
+				.cf_dump .trace .class,
+				.cf_dump .trace .filler {
+					opacity: 0.50;
+				}
+
+				.cf_dump .trace .file {
+					font-size: 11px;
+				}
+
 				.cf_dump .cfdump_array,
 				.cf_dump .cfdump_query,
 				.cf_dump .cfdump_struct,
@@ -951,149 +978,244 @@
 
 					<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
-					<!--- BEGIN: prepare constructors --->
+					<!--- check for exception instance (ColdFusion) --->
+					<cfif (
+						(find("coldfusion.", LOCAL.subType) eq 1) and
+						isInstanceOf(ARGUMENTS.var, "coldfusion.runtime.NeoException")
+					)>
 
-						<cfset LOCAL.constructors = []>
+						<cfset LOCAL.cssDeepColor = "##000000">
+						<cfset LOCAL.cssForeColor = "##FFFF80">
+						<cfset LOCAL.cssSoftColor = "##FFFF80">
 
-						<cfset LOCAL.buffer = LOCAL.meta.getConstructors()>
-						<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
+						<cfset LOCAL.exceptionFields = [
+							"NativeErrorCode",
+							"SqlState",
+							"Sql",
+							"QueryError",
+							"Where",
+							"ErrNumber",
+							"MissingFileName",
+							"LockName",
+							"LockOperation",
+							"ErrorCode",
+							"ExtendedInfo"
+						]>
 
-							<cfset LOCAL.methodSign = []>
+						<div class="var exception">
+							<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+								ColdFusion Exception
+							</div>
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									Type
+								</div>
+								<div class="rowcell">
+									#renderDump(ARGUMENTS.var.getType(), ARGUMENTS.depth)#
+								</div>
+							</div>
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									Message
+								</div>
+								<div class="rowcell">
+									#renderDump(ARGUMENTS.var.getMessage(), ARGUMENTS.depth)#
+								</div>
+							</div>
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									Detail
+								</div>
+								<div class="rowcell">
+									#renderDump(ARGUMENTS.var.getDetail(), ARGUMENTS.depth)#
+								</div>
+							</div>
+							<div class="row trace">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									TagContext
+								</div>
+								<div class="rowcell">
 
-							<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
-							<cfloop array="#LOCAL.params#" index="LOCAL.param">
+									<span class="exception">
+										#encodeForHtml( ARGUMENTS.var.getMessage() )#
+									</span>
 
-								<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
+									<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+										<br>&nbsp;&nbsp;<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+									</cfloop>
 
-								<cfset LOCAL.methodSign.add(
-									encodeForHtml(LOCAL.typeName)
+								</div>
+							</div>
+							<cfloop array="#LOCAL.exceptionFields#" index="LOCAL.exceptionField">
+
+								<cfif not structKeyExists(ARGUMENTS.var, LOCAL.exceptionField)>
+									<cfcontinue>
+								</cfif>
+
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										#LOCAL.exceptionField#
+									</div>
+									<div class="rowcell">
+										#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth)#
+									</div>
+								</div>
+
+							</cfloop>
+							<div class="row trace">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									StackTrace
+								</div>
+								<div class="rowcell">
+
+									<span class="exception">
+										#encodeForHtml( ARGUMENTS.var.toString() )#
+									</span>
+
+									<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
+									<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
+										<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
+									</cfloop>
+
+								</div>
+							</div>
+						</div>
+
+					<cfelse>
+
+						<!--- BEGIN: prepare constructors --->
+
+							<cfset LOCAL.constructors = []>
+
+							<cfset LOCAL.buffer = LOCAL.meta.getConstructors()>
+							<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
+
+								<cfset LOCAL.methodSign = []>
+
+								<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
+								<cfloop array="#LOCAL.params#" index="LOCAL.param">
+
+									<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
+
+									<cfset LOCAL.methodSign.add(
+										encodeForHtml(LOCAL.typeName)
+									)>
+
+								</cfloop>
+
+								<cfset LOCAL.constructors.add(
+									'<span class="method">#encodeForHtml( listLast(LOCAL.method.getName(), ".") )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>)'
 								)>
 
 							</cfloop>
 
-							<cfset LOCAL.constructors.add(
-								'<span class="method">#encodeForHtml( listLast(LOCAL.method.getName(), ".") )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>)'
-							)>
+							<cfset arraySort(LOCAL.constructors, "TEXT", "ASC")>
 
-						</cfloop>
+						<!--- END: prepare constructors --->
 
-						<cfset arraySort(LOCAL.constructors, "TEXT", "ASC")>
+						<!--- BEGIN: prepare fields --->
 
-					<!--- END: prepare constructors --->
+							<cfset LOCAL.fields = []>
 
-					<!--- BEGIN: prepare fields --->
+							<cfset LOCAL.buffer = LOCAL.meta.getFields()>
+							<cfloop array="#LOCAL.buffer#" index="LOCAL.field">
 
-						<cfset LOCAL.fields = []>
+								<cfset LOCAL.fieldType = transformClassName( LOCAL.field.getType().getName() )>
 
-						<cfset LOCAL.buffer = LOCAL.meta.getFields()>
-						<cfloop array="#LOCAL.buffer#" index="LOCAL.field">
-
-							<cfset LOCAL.fieldType = transformClassName( LOCAL.field.getType().getName() )>
-
-							<cfset LOCAL.fields.add(
-								'<span class="type">#encodeForHtml(LOCAL.fieldType)#</span> <span class="field">#encodeForHtml( LOCAL.field.getName() )#</span>'
-							)>
-
-						</cfloop>
-
-						<cfset arraySort(LOCAL.fields, "TEXT", "ASC")>
-
-					<!--- END: prepare fields --->
-
-					<!--- BEGIN: prepare methods --->
-
-						<cfset LOCAL.methods = []>
-
-						<cfset LOCAL.buffer = LOCAL.meta.getMethods()>
-						<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
-
-							<cfset LOCAL.returnType = transformClassName( LOCAL.method.getReturnType().getName() )>
-							<cfset LOCAL.methodSign = []>
-
-							<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
-							<cfloop array="#LOCAL.params#" index="LOCAL.param">
-
-								<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
-
-								<cfset LOCAL.methodSign.add(
-									encodeForHtml(LOCAL.typeName)
+								<cfset LOCAL.fields.add(
+									'<span class="type">#encodeForHtml(LOCAL.fieldType)#</span> <span class="field">#encodeForHtml( LOCAL.field.getName() )#</span>'
 								)>
 
 							</cfloop>
 
-							<cfset LOCAL.methods.add(
-								'<span class="method">#encodeForHtml( LOCAL.method.getName() )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>) <span class="returns">#encodeForHtml(LOCAL.returnType)#</span>'
-							)>
+							<cfset arraySort(LOCAL.fields, "TEXT", "ASC")>
 
-						</cfloop>
+						<!--- END: prepare fields --->
 
-						<cfset arraySort(LOCAL.methods, "TEXT", "ASC")>
+						<!--- BEGIN: prepare methods --->
 
-					<!--- END: prepare methods --->
+							<cfset LOCAL.methods = []>
 
-					<div class="var object">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-							<cfif len(LOCAL.docsLink)>
-								<span class="type">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" class="subtype">#encodeForHtml(LOCAL.subType)#</a> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
-							<cfelse>
-								<span class="type">object</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+							<cfset LOCAL.buffer = LOCAL.meta.getMethods()>
+							<cfloop array="#LOCAL.buffer#" index="LOCAL.method">
+
+								<cfset LOCAL.returnType = transformClassName( LOCAL.method.getReturnType().getName() )>
+								<cfset LOCAL.methodSign = []>
+
+								<cfset LOCAL.params = LOCAL.method.getParameterTypes()>
+								<cfloop array="#LOCAL.params#" index="LOCAL.param">
+
+									<cfset LOCAL.typeName = transformClassName( LOCAL.param.getName() )>
+
+									<cfset LOCAL.methodSign.add(
+										encodeForHtml(LOCAL.typeName)
+									)>
+
+								</cfloop>
+
+								<cfset LOCAL.methods.add(
+									'<span class="method">#encodeForHtml( LOCAL.method.getName() )#</span>(<span class="params">#arrayToList(LOCAL.methodSign, ", ")#</span>) <span class="returns">#encodeForHtml(LOCAL.returnType)#</span>'
+								)>
+
+							</cfloop>
+
+							<cfset arraySort(LOCAL.methods, "TEXT", "ASC")>
+
+						<!--- END: prepare methods --->
+
+						<div class="var object">
+							<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+								<cfif len(LOCAL.docsLink)>
+									<span class="type">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" class="subtype">#encodeForHtml(LOCAL.subType)#</a> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+								<cfelse>
+									<span class="type">object</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+								</cfif>
+							</div>
+							<cfif not arrayIsEmpty(LOCAL.constructors)>
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										<span class="type">constructors</span>
+									</div>
+									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+										<div class="cellcontent">
+											<cfloop array="#LOCAL.constructors#" index="LOCAL.method">
+												#LOCAL.method#<br>
+											</cfloop>
+										</div>
+									</div>
+								</div>
+							</cfif>
+							<cfif not arrayIsEmpty(LOCAL.fields)>
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										<span class="type">fields</span>
+									</div>
+									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+										<div class="cellcontent">
+											<cfloop array="#LOCAL.fields#" index="LOCAL.field">
+												#LOCAL.field#<br>
+											</cfloop>
+										</div>
+									</div>
+								</div>
+							</cfif>
+							<cfif not arrayIsEmpty(LOCAL.methods)>
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										<span class="type">methods</span>
+									</div>
+									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+										<div class="cellcontent">
+											<cfloop array="#LOCAL.methods#" index="LOCAL.method">
+												#LOCAL.method#<br>
+											</cfloop>
+										</div>
+									</div>
+								</div>
 							</cfif>
 						</div>
-						<cfif find("coldfusion.", LOCAL.subType) eq 1>
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									<span class="type">ColdFusion</span>
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									<div class="cellcontent">
-										<cfdump var="#ARGUMENTS.var#">
-									</div>
-								</div>
-							</div>
-						</cfif>
-						<cfif not arrayIsEmpty(LOCAL.constructors)>
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									<span class="type">constructors</span>
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									<div class="cellcontent">
-										<cfloop array="#LOCAL.constructors#" index="LOCAL.method">
-											#LOCAL.method#<br>
-										</cfloop>
-									</div>
-								</div>
-							</div>
-						</cfif>
-						<cfif not arrayIsEmpty(LOCAL.fields)>
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									<span class="type">fields</span>
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									<div class="cellcontent">
-										<cfloop array="#LOCAL.fields#" index="LOCAL.field">
-											#LOCAL.field#<br>
-										</cfloop>
-									</div>
-								</div>
-							</div>
-						</cfif>
-						<cfif not arrayIsEmpty(LOCAL.methods)>
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									<span class="type">methods</span>
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									<div class="cellcontent">
-										<cfloop array="#LOCAL.methods#" index="LOCAL.method">
-											#LOCAL.method#<br>
-										</cfloop>
-									</div>
-								</div>
-							</div>
-						</cfif>
-					</div>
+
+					</cfif>
 
 				</cfif>
 
@@ -1158,55 +1280,167 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
-				<div class="var struct">
+				<!--- check for exception instance (Lucee) --->
+				<cfif (
+					(find("lucee.", LOCAL.subType) eq 1) and
+					isInstanceOf(ARGUMENTS.var, "lucee.runtime.exp.CatchBlockImpl")
+				)>
 
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
-						<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+					<cfset LOCAL.cssDeepColor = "##000000">
+					<cfset LOCAL.cssForeColor = "##FFFF80">
+					<cfset LOCAL.cssSoftColor = "##FFFF80">
+
+					<cfset LOCAL.exceptionFields = [
+						"Type",
+						"Message",
+						"Detail",
+						"TagContext",
+						"StackTrace"
+					]>
+
+					<div class="var exception">
+						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+							Lucee Exception
+						</div>
+						<div class="row">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								Type
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.Type, ARGUMENTS.depth)#
+							</div>
+						</div>
+						<div class="row">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								Message
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.Message, ARGUMENTS.depth)#
+							</div>
+						</div>
+						<div class="row">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								Detail
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.Detail, ARGUMENTS.depth)#
+							</div>
+						</div>
+						<div class="row trace">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								TagContext
+							</div>
+							<div class="rowcell">
+
+								<span class="exception">
+									#encodeForHtml( ARGUMENTS.var.Message )#
+								</span>
+
+								<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+
+									<cfset LOCAL.preserveNL = LOCAL.entry.codePrintHTML>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, chr(9), "&nbsp;&nbsp;&nbsp;&nbsp;", "ALL")>
+
+									<div class="preview">
+										<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+										<div class="block">#LOCAL.preserveNL#</div>
+									</div>
+
+								</cfloop>
+
+							</div>
+						</div>
+
+						<cfset LOCAL.sortedKeys = structKeyArray(ARGUMENTS.var)>
+						<cfset arraySort(LOCAL.sortedKeys, "TEXTnoCASE")>
+
+						<cfloop array="#LOCAL.sortedKeys#" index="LOCAL.exceptionField">
+
+							<cfif arrayFindNoCase(LOCAL.exceptionFields, LOCAL.exceptionField)>
+								<cfcontinue>
+							</cfif>
+
+							<div class="row">
+								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									#LOCAL.exceptionField#
+								</div>
+								<div class="rowcell">
+									#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth)#
+								</div>
+							</div>
+
+						</cfloop>
+
+						<div class="row trace">
+							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								StackTrace
+							</div>
+							<div class="rowcell">
+
+								<cfset LOCAL.preserveNL = encodeForHtml(ARGUMENTS.var.StackTrace)>
+								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xd;", "", "ALL")>
+								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xa;", "<br>", "ALL")>
+								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##x9;", "&nbsp;&nbsp;", "ALL")>
+
+								#LOCAL.preserveNL#
+
+							</div>
+						</div>
 					</div>
 
-					<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
+				<cfelse>
 
-						<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
+					<div class="var struct">
 
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									#encodeForHtml(LOCAL.key)#
-								</div>
-								<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
-									<div class="cellcontent">
-										[blacklisted]
+						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+							<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+						</div>
+
+						<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
+
+							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
+
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										#encodeForHtml(LOCAL.key)#
+									</div>
+									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+										<div class="cellcontent">
+											[blacklisted]
+										</div>
 									</div>
 								</div>
-							</div>
 
-						<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
+							<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
 
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									#encodeForHtml(LOCAL.key)#
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										#encodeForHtml(LOCAL.key)#
+									</div>
+									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
+									</div>
 								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
+
+							<!--- null value --->
+							<cfelse>
+
+								<div class="row">
+									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+										#encodeForHtml(LOCAL.key)#
+									</div>
+									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+										#renderDump()#
+									</div>
 								</div>
-							</div>
 
-						<!--- null value --->
-						<cfelse>
+							</cfif>
 
-							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-									#encodeForHtml(LOCAL.key)#
-								</div>
-								<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-									#renderDump()#
-								</div>
-							</div>
+						</cfloop>
 
-						</cfif>
+					</div>
 
-					</cfloop>
-
-				</div>
+				</cfif>
 
 			</cfif>
 
