@@ -367,8 +367,8 @@
 
 						if (event.target.nodeName !== 'A') {
 
-							var source 	= this;
-							var rows 	= source.parentNode.children;
+							var source = this;
+							var rows   = source.parentNode.children;
 
 							toggleHeader(source, rows);
 						}
@@ -424,8 +424,8 @@
 
 						if (source.getAttribute('data-cf_dump_querycolumn') !== null) {
 
-							var parent 	= source.parentNode.parentNode;
-							    cells 	= parent.querySelectorAll('.rowcell[data-cf_dump_querycell="' + column + '"]');
+							var parent = source.parentNode.parentNode;
+							    cells  = parent.querySelectorAll('.rowcell[data-cf_dump_querycell="' + column + '"]');
 
 							toggleRowCell(source, cells);
 
@@ -476,8 +476,8 @@
 
 <cffunction name="renderDump" accessor="private" output="true" returnType="void">
 
-	<cfargument name="var" 		type="any" 		required="false">
-	<cfargument name="depth" 	type="numeric" 	default="-1">
+	<cfargument name="var"   type="any"     required="false">
+	<cfargument name="depth" type="numeric" default="-1">
 
 	<cfset ARGUMENTS.depth++>
 
@@ -506,18 +506,18 @@
 		<!--- simple --->
 		<cfelseif isSimpleValue(ARGUMENTS.var)>
 
-			<cfset LOCAL.type 		= ARGUMENTS.var.getClass().getName()>
-			<cfset LOCAL.subType 	= "">
+			<cfset LOCAL.type    = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.subType = "">
 
-			<cfset LOCAL.title 		= "">
+			<cfset LOCAL.title = "">
 
 			<cfswitch expression="#LOCAL.type#">
 
 				<cfcase value="java.lang.Boolean">
 
-					<cfset LOCAL.cssClass 		= "boolean">
-					<cfset LOCAL.cssDeepColor 	= "##673AB7">
-					<cfset LOCAL.cssForeColor 	= "##FFFFFF">
+					<cfset LOCAL.cssClass     = "boolean">
+					<cfset LOCAL.cssDeepColor = "##673AB7">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
 					<cfset LOCAL.type = "boolean">
 
@@ -527,12 +527,12 @@
 
 				<cfcase value="java.lang.Byte">
 
-					<cfset LOCAL.cssClass 		= "byte">
-					<cfset LOCAL.cssDeepColor 	= "##FFCC44">
-					<cfset LOCAL.cssForeColor 	= "##000000">
+					<cfset LOCAL.cssClass     = "byte">
+					<cfset LOCAL.cssDeepColor = "##FFCC44">
+					<cfset LOCAL.cssForeColor = "##000000">
 
-					<cfset LOCAL.type 		= "byte">
-					<cfset LOCAL.subType 	= "HEX">
+					<cfset LOCAL.type    = "byte">
+					<cfset LOCAL.subType = "HEX">
 
 					<cfset ARGUMENTS.var = VARIABLES.String.format("%02X", [ ARGUMENTS.var ])>
 
@@ -540,23 +540,23 @@
 
 				<cfcase value="java.lang.Double">
 
-					<cfset LOCAL.cssClass 		= "numeric">
-					<cfset LOCAL.cssDeepColor 	= "##2196F3">
-					<cfset LOCAL.cssForeColor 	= "##FFFFFF">
+					<cfset LOCAL.cssClass     = "numeric">
+					<cfset LOCAL.cssDeepColor = "##2196F3">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
-					<cfset LOCAL.type 		= "numeric">
-					<cfset LOCAL.subType 	= "double">
+					<cfset LOCAL.type    = "numeric">
+					<cfset LOCAL.subType = "double">
 
 				</cfcase>
 
 				<cfcase value="java.lang.String">
 
-					<cfset LOCAL.cssClass 		= "string">
-					<cfset LOCAL.cssDeepColor 	= "##FF8000">
-					<cfset LOCAL.cssForeColor 	= "##FFFFFF">
+					<cfset LOCAL.cssClass     = "string">
+					<cfset LOCAL.cssDeepColor = "##FF8000">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
-					<cfset LOCAL.len 	= len(ARGUMENTS.var)>
-					<cfset LOCAL.type 	= "string [#LOCAL.len#]">
+					<cfset LOCAL.len  = len(ARGUMENTS.var)>
+					<cfset LOCAL.type = "string [#LOCAL.len#]">
 
 					<cfif LOCAL.len>
 
@@ -571,15 +571,15 @@
 
 							<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. Every whitespace has been replaced with a dot.">
 
-							<cfset LOCAL.cssClass 	&= " whitespace">
-							<cfset ARGUMENTS.var 	 = reReplace(ARGUMENTS.var, "\s", ".", "ALL")>
+							<cfset LOCAL.cssClass &= " whitespace">
+							<cfset ARGUMENTS.var   = reReplace(ARGUMENTS.var, "\s", ".", "ALL")>
 
 						</cfif>
 
 					<cfelse>
 
-						<cfset LOCAL.cssClass 	&= " lowkey empty">
-						<cfset ARGUMENTS.var 	 = "[empty string]">
+						<cfset LOCAL.cssClass &= " lowkey empty">
+						<cfset ARGUMENTS.var   = "[empty string]">
 
 					</cfif>
 
@@ -587,20 +587,20 @@
 
 				<cfcase value="java.lang.Integer">
 
-					<cfset LOCAL.cssClass 		= "numeric">
-					<cfset LOCAL.cssDeepColor 	= "##2196F3">
-					<cfset LOCAL.cssForeColor 	= "##FFFFFF">
+					<cfset LOCAL.cssClass     = "numeric">
+					<cfset LOCAL.cssDeepColor = "##2196F3">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
-					<cfset LOCAL.type 		= "numeric">
-					<cfset LOCAL.subType 	= "integer">
+					<cfset LOCAL.type    = "numeric">
+					<cfset LOCAL.subType = "integer">
 
 				</cfcase>
 
 				<cfdefaultcase>
 
-					<cfset LOCAL.cssClass 		= "simple">
-					<cfset LOCAL.cssDeepColor 	= "##FF8000">
-					<cfset LOCAL.cssForeColor 	= "##FFFFFF">
+					<cfset LOCAL.cssClass     = "simple">
+					<cfset LOCAL.cssDeepColor = "##FF8000">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
 				</cfdefaultcase>
 
@@ -628,9 +628,9 @@
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##CCFFCC">
 
-			<cfset LOCAL.subType 	= ARGUMENTS.var.getClass().getName()>
-			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
-			<cfset LOCAL.len 		= arrayLen(ARGUMENTS.var)>
+			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
+			<cfset LOCAL.len      = arrayLen(ARGUMENTS.var)>
 
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
@@ -738,8 +738,8 @@
 		<!--- component, object --->
 		<cfelseif isObject(ARGUMENTS.var)>
 
-			<cfset LOCAL.meta 		= getMetaData(ARGUMENTS.var)>
-			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
+			<cfset LOCAL.meta     = getMetaData(ARGUMENTS.var)>
+			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 
 			<!--- component --->
 			<cfif (
@@ -951,8 +951,8 @@
 				<cfset LOCAL.cssForeColor = "##FFFFFF">
 				<cfset LOCAL.cssSoftColor = "##FFDBDB">
 
-				<cfset LOCAL.meta 		= ARGUMENTS.var.getClass()>
-				<cfset LOCAL.subType 	= LOCAL.meta.getName()>
+				<cfset LOCAL.meta    = ARGUMENTS.var.getClass()>
+				<cfset LOCAL.subType = LOCAL.meta.getName()>
 
 				<cfset LOCAL.docsLink = "">
 				<cfif find("java.", LOCAL.subType) eq 1>
@@ -1331,9 +1331,9 @@
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##CCDDFF">
 
-			<cfset LOCAL.subType 	= ARGUMENTS.var.getClass().getName()>
-			<cfset LOCAL.identity 	= VARIABLES.System.identityHashCode(ARGUMENTS.var)>
-			<cfset LOCAL.len 		= structCount(ARGUMENTS.var)>
+			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
+			<cfset LOCAL.len      = structCount(ARGUMENTS.var)>
 
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
@@ -1545,8 +1545,8 @@
 				<cfset LOCAL.columns = ARGUMENTS.var.getMetaData().getColumnLabels()>
 			</cfif>
 
-			<cfset LOCAL.columnCount 	= arrayLen(LOCAL.columns)>
-			<cfset LOCAL.len 			= ARGUMENTS.var.recordCount>
+			<cfset LOCAL.columnCount = arrayLen(LOCAL.columns)>
+			<cfset LOCAL.len         = ARGUMENTS.var.recordCount>
 
 			<cfif LOCAL.columnCount>
 				<cfset LOCAL.columnWidth = (99 / LOCAL.columnCount)>
