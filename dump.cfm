@@ -7,6 +7,8 @@
 	<cfexit>
 </cfif>
 
+<cfset VARIABLES.isLucee = structKeyExists(SERVER, "lucee")>
+
 <!--- BEGIN: attributes --->
 
 	<!--- abort --->
@@ -1537,7 +1539,12 @@
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##FFDDFF">
 
-			<cfset LOCAL.columns 		= ARGUMENTS.var.getColumnNames()>
+			<cfif VARIABLES.isLucee>
+				<cfset LOCAL.columns = ARGUMENTS.var.columnArray()>
+			<cfelse>
+				<cfset LOCAL.columns = ARGUMENTS.var.getMetaData().getColumnLabels()>
+			</cfif>
+
 			<cfset LOCAL.columnCount 	= arrayLen(LOCAL.columns)>
 			<cfset LOCAL.len 			= ARGUMENTS.var.recordCount>
 
