@@ -1221,6 +1221,92 @@
 
 			</cfif>
 
+		<!--- xml --->
+		<cfelseif isXmlNode(ARGUMENTS.var)>
+
+			<cfset LOCAL.cssDeepColor = "##808080">
+			<cfset LOCAL.cssForeColor = "##FFFFFF">
+			<cfset LOCAL.cssSoftColor = "##EEEEEE">
+
+			<cfif isXmlDoc(ARGUMENTS.var)>
+
+				<div class="var xml">
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">XmlDocument</span> <span class="subtype"></span>
+					</div>
+					<div class="row">
+						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							#renderDump(ARGUMENTS.var.XmlRoot, ARGUMENTS.depth)#
+						</div>
+					</div>
+				</div>
+
+			<cfelse>
+
+				<div class="var xml">
+					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<span class="type">#( isXmlRoot(ARGUMENTS.var) ? "XmlRoot" : "XmlNode" )#</span>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlName
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlName, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlNsPrefix
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlNsURI
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlText
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlComment
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlAttributes
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
+						</div>
+					</div>
+					<div class="row">
+						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							XmlChildren
+						</div>
+						<div class="rowcell">
+							#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
+						</div>
+					</div>
+				</div>
+
+			</cfif>
+
 		<!--- struct --->
 		<cfelseif isStruct(ARGUMENTS.var)>
 
