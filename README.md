@@ -78,6 +78,12 @@ Hints the number of rows (`recordCount`).
 | ------- | -------- | ----- |
 | ![](screenshots/query_dump.png) | ![](screenshots/query_acf.png) | ![](screenshots/query_lucee.png) |
 
+## xml
+
+| cf_dump | Adobe CF | Lucee |
+| ------- | -------- | ----- |
+| ![](screenshots/xml_dump.png) | ![](screenshots/xml_acf.png) | ![](screenshots/xml_lucee.png) |
+
 ## exception
 
 | cf_dump | Adobe CF |
