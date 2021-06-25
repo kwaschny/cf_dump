@@ -57,6 +57,16 @@
 		<cfset ATTRIBUTES.byteEncoding = []>
 	</cfif>
 
+	<!--- embed --->
+	<cfif (
+		(not structKeyExists(ATTRIBUTES, "embed")) and
+		structKeyExists(REQUEST, "__cf_dump_embed") and
+		isBoolean(REQUEST["__cf_dump_embed"])
+	)>
+		<cfset ATTRIBUTES.embed = REQUEST["__cf_dump_embed"]>
+	</cfif>
+	<cfparam name="ATTRIBUTES.embed" type="boolean" default="false">
+
 	<!--- label --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "label")) and
@@ -122,7 +132,11 @@
 <!--- HTML --->
 <cfoutput>
 
-	<cfif ATTRIBUTES.reset or (not structKeyExists(REQUEST, "__cf_dump_head"))>
+	<cfif (
+		ATTRIBUTES.embed or
+		ATTRIBUTES.reset or
+		(not structKeyExists(REQUEST, "__cf_dump_head"))
+	)>
 
 		<cfset REQUEST["__cf_dump_head"] = true>
 
@@ -317,6 +331,9 @@
 		<script>
 
 			document.addEventListener('DOMContentLoaded', function() {
+
+				if (typeof window.__cf_dump_head !== 'undefined') { return; }
+				window.__cf_dump_head = true;
 
 				var i;
 

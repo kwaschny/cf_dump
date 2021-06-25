@@ -263,6 +263,10 @@ Discard all output before `<cf_dump>` is executed. This is handy if you want to 
 
 Abort the request after `<cf_dump>` has been executed. This is a convenience shortcut for `<cfabort>`. Default: `false`
 
+### embed
+
+Embed `<style>` and `<script>` content, required for the visual representation. Specify this when using `<cf_dump>` in a separate output context such as `<cfmail>` or `<cfsavecontent>`. Default: `false`
+
 ## Overriding tag attribute defaults
 
 You can override the defaults of attributes by setting the corresponding key in the `REQUEST` scope. Of course, you can still override individual attributes per tag.
