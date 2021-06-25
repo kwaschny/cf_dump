@@ -1054,15 +1054,17 @@
 									TagContext
 								</div>
 								<div class="rowcell">
+									<div class="cellcontent">
 
-									<span class="exception">
-										#encodeForHtml( ARGUMENTS.var.getMessage() )#
-									</span>
+										<span class="exception">
+											#encodeForHtml( ARGUMENTS.var.getMessage() )#
+										</span>
 
-									<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
-										<br>&nbsp;&nbsp;<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
-									</cfloop>
+										<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+											<br>&nbsp;&nbsp;<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+										</cfloop>
 
+									</div>
 								</div>
 							</div>
 							<cfloop array="#LOCAL.exceptionFields#" index="LOCAL.exceptionField">
@@ -1086,6 +1088,7 @@
 									StackTrace
 								</div>
 								<div class="rowcell">
+									<div class="cellcontent">
 
 									<span class="exception">
 										#encodeForHtml( ARGUMENTS.var.toString() )#
@@ -1096,6 +1099,7 @@
 										<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
 									</cfloop>
 
+									</div>
 								</div>
 							</div>
 						</div>
