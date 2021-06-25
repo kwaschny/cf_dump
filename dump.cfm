@@ -488,6 +488,7 @@
 </cfoutput>
 
 <cfif ATTRIBUTES.abort>
+	<cfsetting enableCFoutputOnly="false">
 	<cfabort>
 </cfif>
 
@@ -1671,3 +1672,4 @@
 	<!--- multidimensional array is treated as one dimensional array --->
 	<cfreturn (ARGUMENTS.className & "[]")>
 </cffunction>
+<cfsetting enableCFoutputOnly="false">
