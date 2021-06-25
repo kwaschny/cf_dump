@@ -78,6 +78,16 @@ Hints the number of rows (`recordCount`).
 | ------- | -------- | ----- |
 | ![](screenshots/query_dump.png) | ![](screenshots/query_acf.png) | ![](screenshots/query_lucee.png) |
 
+## exception
+
+| cf_dump | Adobe CF |
+| ------- | -------- |
+| ![](screenshots/exception_dump_acf.jpg) | ![](screenshots/exception_acf.jpg) |
+
+| cf_dump | Lucee |
+| ------- | ----- |
+| ![](screenshots/exception_dump_lucee.jpg) | ![](screenshots/exception_lucee.jpg) |
+
 ## component with public fields
 
 | cf_dump | Adobe CF | Lucee |
