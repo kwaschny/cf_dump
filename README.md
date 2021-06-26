@@ -130,7 +130,7 @@ tag syntax
 	<cffunction accessor="public" returnType="struct" name="dump">
 
 		<cfreturn VARIABLES>
-	</cfif>
+	</cffunction>
 
 </cfcomponent>
 ```
