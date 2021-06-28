@@ -1,6 +1,6 @@
 # A ColdFusion custom tag to improve the native cfdump tag
 
-The `<cfdump>` tag is very handy to debug data. However, the output of it, especially in Adobe ColdFusion, unfortunately is very sparse. And while Railo/Lucee does way better here, there is still room for improvement. This custom tag `<cf_dump>` is written from scratch, offers more insight and renders faster than the native cfdump (compared to ACF).
+The `<cfdump>` tag is very handy to debug data. However, the output of it, especially in Adobe ColdFusion, unfortunately is very sparse. And while Lucee does way better here, there is still room for improvement. This custom tag `<cf_dump>` is written from scratch, offers more insight and renders faster than the native cfdump (compared to ACF).
 
 Anyway, pictures are worth a thousand words:
 
