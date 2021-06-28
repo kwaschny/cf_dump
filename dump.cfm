@@ -1,6 +1,4 @@
-﻿<cfsetting enableCFoutputOnly="true">
-
-<cfif (
+﻿<cfif (
 	(not structKeyExists(VARIABLES, "THISTAG")) or
 	(THISTAG.executionMode neq "start")
 )>
