@@ -292,7 +292,7 @@ You can override the defaults of attributes by setting the corresponding key in 
 ```
 <cfset REQUEST["__cf_dump_wsWarning"] = false>
 ```
-_(That's **two** underscores `__`, then `cf_dump`, then the name of the attribute.)_
+_(That's **two** underscores `__`, then `cf_dump`, another single underscore `_` and then the name of the attribute.)_
 
 This will disable the whitespace indicator for strings for the rest of the request.
 
