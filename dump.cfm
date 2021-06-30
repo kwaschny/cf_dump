@@ -621,7 +621,7 @@
 
 			</cfswitch>
 
-			<div title="#encodeForHtmlAttribute(LOCAL.title)#" class="var #LOCAL.cssClass#">
+			<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="var #LOCAL.cssClass#">
 				<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 					<span class="type">#encodeForHtml(LOCAL.type)#</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 				</div>
