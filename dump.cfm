@@ -1,8 +1,10 @@
-﻿<cfif (
+﻿<cfsetting enableCFoutputOnly="true">
+
+<cfif (
 	(not structKeyExists(VARIABLES, "THISTAG")) or
 	(THISTAG.executionMode neq "start")
 )>
-	<cfexit>
+	<cfsetting enableCFoutputOnly="false"><cfexit>
 </cfif>
 
 <cfset VARIABLES.isLucee = structKeyExists(SERVER, "lucee")>
@@ -127,503 +129,499 @@
 	<cfcontent reset="true">
 </cfif>
 
-<!--- HTML --->
-<cfoutput>
+<cfsavecontent variable="VARIABLES.output">
+	<cfoutput>
 
-	<cfif (
-		ATTRIBUTES.embed or
-		ATTRIBUTES.reset or
-		(not structKeyExists(REQUEST, "__cf_dump_head"))
-	)>
+		<cfif (
+			ATTRIBUTES.embed or
+			ATTRIBUTES.reset or
+			(not structKeyExists(REQUEST, "__cf_dump_head"))
+		)>
 
-		<cfset REQUEST["__cf_dump_head"] = true>
+			<cfset REQUEST["__cf_dump_head"] = true>
 
-		<style>
+			<style>
 
-			.cf_dump {
-				background-color: ##FFFFFF;
-				border-spacing: 0px;
-				color: ##000000;
-				font-family: 'Segoe UI', sans-serif;
-				font-size: 14px;
-				margin-bottom: 8px;
-				margin-top: 8px;
-			}
-
-				.cf_dump div {
-					box-sizing: border-box;
-					font-size: inherit;
+				.cf_dump {
+					background-color: ##FFFFFF;
+					border-spacing: 0px;
+					color: ##000000;
+					font-family: 'Segoe UI', sans-serif;
+					font-size: 14px;
+					margin-bottom: 8px;
+					margin-top: 8px;
 				}
 
-				.cf_dump .lowkey {
-					color: ##A0A0A0;
-				}
-
-				.cf_dump .empty {
-					white-space: nowrap;
-				}
-
-				.cf_dump .label {
-					background-color: ##E91E63;
-					color: ##FFFFFF;
-					padding: 4px;
-				}
-
-				.cf_dump .var {
-					border-collapse: collapse;
-					display: table;
-					width: 100%;
-				}
-					.cf_dump .var.whitespace .colheader::before {
-						content: '⚠️ '
-					}
-					.cf_dump .var.whitespace .rowcell {
-						color: ##F00000;
-						font-family: Consolas, monospace;
-						letter-spacing: 1px;
+					.cf_dump div {
+						box-sizing: border-box;
+						font-size: inherit;
 					}
 
-					<!--- BEGIN: colors --->
-
-						.cf_dump .var.array > .colheader {
-							background-color: ##009900;
-							border-color: ##009900;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.array > .row > .rowheader {
-							background-color: ##CCFFCC;
-							border-color: ##009900;
-							color: ##009900;
-						}
-						.cf_dump .var.array > .row > .rowcell {
-							border-color: ##009900;
-						}
-
-						.cf_dump .var.boolean > .colheader {
-							background-color: ##673AB7;
-							border-color: ##673AB7;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.boolean > .row > .rowcell {
-							border-color: ##673AB7;
-						}
-
-						.cf_dump .var.byte > .colheader {
-							background-color: ##FFCC44;
-							border-color: ##FFCC44;
-							color: ##000000;
-						}
-						.cf_dump .var.byte > .row > .rowcell {
-							border-color: ##FFCC44;
-						}
-
-						.cf_dump .var.component > .colheader {
-							background-color: ##1C434A;
-							border-color: ##1C434A;
-							color: ##B6DCE3;
-						}
-						.cf_dump .var.component > .row > .rowheader {
-							background-color: ##B6DCE3;
-							border-color: ##1C434A;
-							color: ##1C434A;
-						}
-						.cf_dump .var.component > .row > .rowcell {
-							border-color: ##1C434A;
-						}
-
-						.cf_dump .var.null > .colheader {
-							background-color: ##000000;
-							border-color: ##000000;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.null > .row > .rowcell {
-							border-color: ##000000;
-						}
-
-						.cf_dump .var.numeric > .colheader {
-							background-color: ##2196F3;
-							border-color: ##2196F3;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.numeric > .row > .rowcell {
-							border-color: ##2196F3;
-						}
-
-						.cf_dump .var.object > .colheader {
-							background-color: ##FF4444;
-							border-color: ##FF4444;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.object > .row > .rowheader {
-							background-color: ##FFDBDB;
-							border-color: ##FF4444;
-							color: ##FF4444;
-						}
-						.cf_dump .var.object > .row > .rowcell {
-							border-color: ##FF4444;
-						}
-
-						.cf_dump .var.query > .colheader {
-							background-color: ##AA66AA;
-							border-color: ##AA66AA;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.query > .colfooter {
-							border-color: ##AA66AA;
-						}
-						.cf_dump .var.query > .row > .rowheader {
-							background-color: ##FFDDFF;
-							border-color: ##AA66AA;
-							color: ##AA66AA;
-						}
-						.cf_dump .var.query > .row > .rowcell {
-							border-color: ##AA66AA;
-						}
-
-						.cf_dump .var.string > .colheader {
-							background-color: ##FF8000;
-							border-color: ##FF8000;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.string > .row > .rowcell {
-							border-color: ##FF8000;
-						}
-
-						.cf_dump .var.struct > .colheader {
-							background-color: ##4444CC;
-							border-color: ##4444CC;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.struct > .row > .rowheader {
-							background-color: ##CCDDFF;
-							border-color: ##4444CC;
-							color: ##4444CC;
-						}
-						.cf_dump .var.struct > .row > .rowcell {
-							border-color: ##4444CC;
-						}
-
-						.cf_dump .var.xml > .colheader {
-							background-color: ##808080;
-							border-color: ##808080;
-							color: ##FFFFFF;
-						}
-						.cf_dump .var.xml > .row > .rowheader {
-							background-color: ##EEEEEE;
-							border-color: ##808080;
-							color: ##808080;
-						}
-						.cf_dump .var.xml > .row > .rowcell {
-							border-color: ##808080;
-						}
-
-					<!--- END: colors --->
-
-				.cf_dump .colheader {
-					border: 1px solid;
-					cursor: pointer;
-					display: table-caption;
-					font-size: 11px;
-					letter-spacing: 1px;
-					padding: 1px 2px 2px 2px;
-					white-space: nowrap;
-				}
-					.cf_dump .colheader[data-cf_dump_collapsed] {
-						opacity: 0.50;
-					}
-					.cf_dump .type {
-						font-weight: bold;
-					}
-					.cf_dump .subtype {
-						font-size: 9px;
-					}
-					.cf_dump .ref {
-						opacity: 0.50;
+					.cf_dump .lowkey {
+						color: ##A0A0A0;
 					}
 
-				.cf_dump .colfooter {
-					border: 1px solid;
-					display: table-caption;
-					caption-side: bottom;
-					padding: 2px;
-					white-space: nowrap;
-				}
-					.cf_dump .colfooter.hidden {
-						display: none;
-					}
-
-				.cf_dump .row {
-					display: table-row;
-				}
-					.cf_dump .row.hidden {
-						display: none;
-					}
-
-				.cf_dump .rowheader {
-					border: 1px solid;
-					border-right: none;
-					border-top: none;
-					cursor: pointer;
-					display: table-cell;
-					padding: 2px 4px;
-					vertical-align: top;
-					width: 1%;
-				}
-					.cf_dump .rowheader[data-cf_dump_collapsed] {
-						opacity: 0.50;
-					}
-
-					.cf_dump .struct > .row > .rowheader {
+					.cf_dump .empty {
 						white-space: nowrap;
 					}
 
-					.cf_dump .query > .row > .rowheader:last-child {
-						border-right: 1px solid;
+					.cf_dump .label {
+						background-color: ##E91E63;
+						color: ##FFFFFF;
+						padding: 4px;
 					}
 
-				.cf_dump .rowcell {
-					border: 1px solid;
-					border-top: none;
-					display: table-cell;
-					padding: 2px;
-					vertical-align: top;
-				}
-					.cf_dump .rowcell.hidden .var,
-					.cf_dump .rowcell.hidden .cellcontent {
-						display: none;
+					.cf_dump .var {
+						border-collapse: collapse;
+						display: table;
+						width: 100%;
+					}
+						.cf_dump .var.whitespace .colheader::before {
+							content: '⚠️ '
+						}
+						.cf_dump .var.whitespace .rowcell {
+							color: ##F00000;
+							font-family: Consolas, monospace;
+							letter-spacing: 1px;
+						}
+
+						<!--- BEGIN: colors --->
+
+							.cf_dump .var.array > .colheader {
+								background-color: ##009900;
+								border-color: ##009900;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.array > .row > .rowheader {
+								background-color: ##CCFFCC;
+								border-color: ##009900;
+								color: ##009900;
+							}
+							.cf_dump .var.array > .row > .rowcell {
+								border-color: ##009900;
+							}
+
+							.cf_dump .var.boolean > .colheader {
+								background-color: ##673AB7;
+								border-color: ##673AB7;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.boolean > .row > .rowcell {
+								border-color: ##673AB7;
+							}
+
+							.cf_dump .var.byte > .colheader {
+								background-color: ##FFCC44;
+								border-color: ##FFCC44;
+								color: ##000000;
+							}
+							.cf_dump .var.byte > .row > .rowcell {
+								border-color: ##FFCC44;
+							}
+
+							.cf_dump .var.component > .colheader {
+								background-color: ##1C434A;
+								border-color: ##1C434A;
+								color: ##B6DCE3;
+							}
+							.cf_dump .var.component > .row > .rowheader {
+								background-color: ##B6DCE3;
+								border-color: ##1C434A;
+								color: ##1C434A;
+							}
+							.cf_dump .var.component > .row > .rowcell {
+								border-color: ##1C434A;
+							}
+
+							.cf_dump .var.null > .colheader {
+								background-color: ##000000;
+								border-color: ##000000;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.null > .row > .rowcell {
+								border-color: ##000000;
+							}
+
+							.cf_dump .var.numeric > .colheader {
+								background-color: ##2196F3;
+								border-color: ##2196F3;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.numeric > .row > .rowcell {
+								border-color: ##2196F3;
+							}
+
+							.cf_dump .var.object > .colheader {
+								background-color: ##FF4444;
+								border-color: ##FF4444;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.object > .row > .rowheader {
+								background-color: ##FFDBDB;
+								border-color: ##FF4444;
+								color: ##FF4444;
+							}
+							.cf_dump .var.object > .row > .rowcell {
+								border-color: ##FF4444;
+							}
+
+							.cf_dump .var.query > .colheader {
+								background-color: ##AA66AA;
+								border-color: ##AA66AA;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.query > .colfooter {
+								border-color: ##AA66AA;
+							}
+							.cf_dump .var.query > .row > .rowheader {
+								background-color: ##FFDDFF;
+								border-color: ##AA66AA;
+								color: ##AA66AA;
+							}
+							.cf_dump .var.query > .row > .rowcell {
+								border-color: ##AA66AA;
+							}
+
+							.cf_dump .var.string > .colheader {
+								background-color: ##FF8000;
+								border-color: ##FF8000;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.string > .row > .rowcell {
+								border-color: ##FF8000;
+							}
+
+							.cf_dump .var.struct > .colheader {
+								background-color: ##4444CC;
+								border-color: ##4444CC;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.struct > .row > .rowheader {
+								background-color: ##CCDDFF;
+								border-color: ##4444CC;
+								color: ##4444CC;
+							}
+							.cf_dump .var.struct > .row > .rowcell {
+								border-color: ##4444CC;
+							}
+
+							.cf_dump .var.xml > .colheader {
+								background-color: ##808080;
+								border-color: ##808080;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.xml > .row > .rowheader {
+								background-color: ##EEEEEE;
+								border-color: ##808080;
+								color: ##808080;
+							}
+							.cf_dump .var.xml > .row > .rowcell {
+								border-color: ##808080;
+							}
+
+						<!--- END: colors --->
+
+					.cf_dump .colheader {
+						border: 1px solid;
+						cursor: pointer;
+						display: table-caption;
+						font-size: 11px;
+						letter-spacing: 1px;
+						padding: 1px 2px 2px 2px;
+						white-space: nowrap;
+					}
+						.cf_dump .colheader[data-cf_dump_collapsed] {
+							opacity: 0.50;
+						}
+						.cf_dump .type {
+							font-weight: bold;
+						}
+						.cf_dump .subtype {
+							font-size: 9px;
+						}
+						.cf_dump .ref {
+							opacity: 0.50;
+						}
+
+					.cf_dump .colfooter {
+						border: 1px solid;
+						display: table-caption;
+						caption-side: bottom;
+						padding: 2px;
+						white-space: nowrap;
+					}
+						.cf_dump .colfooter.hidden {
+							display: none;
+						}
+
+					.cf_dump .row {
+						display: table-row;
+					}
+						.cf_dump .row.hidden {
+							display: none;
+						}
+
+					.cf_dump .rowheader {
+						border: 1px solid;
+						border-right: none;
+						border-top: none;
+						cursor: pointer;
+						display: table-cell;
+						padding: 2px 4px;
+						vertical-align: top;
+						width: 1%;
+					}
+						.cf_dump .rowheader[data-cf_dump_collapsed] {
+							opacity: 0.50;
+						}
+
+						.cf_dump .struct > .row > .rowheader {
+							white-space: nowrap;
+						}
+
+						.cf_dump .query > .row > .rowheader:last-child {
+							border-right: 1px solid;
+						}
+
+					.cf_dump .rowcell {
+						border: 1px solid;
+						border-top: none;
+						display: table-cell;
+						padding: 2px;
+						vertical-align: top;
+					}
+						.cf_dump .rowcell.hidden .var,
+						.cf_dump .rowcell.hidden .cellcontent {
+							display: none;
+						}
+
+						.cf_dump .string .rowcell {
+							word-break: break-all;
+						}
+
+					.cf_dump .component .extends {
+						margin-left: 7px;
+					}
+					.cf_dump .component .implements {
+						margin-left: 15px;
+					}
+					.cf_dump .component .keyword {
+						color: ##FFFFFF;
 					}
 
-					.cf_dump .string .rowcell {
-						word-break: break-all;
+					.cf_dump .object .col.colheader a {
+						color: inherit;
+						text-decoration: underline;
+					}
+					.cf_dump .object .row .rowcell {
+						font-family: Consolas, monospace;
+					}
+						.cf_dump .object .row .rowcell .returns,
+						.cf_dump .object .row .rowcell .type {
+							opacity: 0.50;
+						}
+						.cf_dump .object .row .rowcell .method {
+							color: ##0000FF;
+						}
+						.cf_dump .object .row .rowcell .returns,
+						.cf_dump .object .row .rowcell .params,
+						.cf_dump .object .row .rowcell .type {
+							font-size: 11px;
+						}
+
+					.cf_dump .trace > .rowcell {
+						overflow: auto;
+						white-space: nowrap;
 					}
 
-				.cf_dump .component .extends {
-					margin-left: 7px;
-				}
-				.cf_dump .component .implements {
-					margin-left: 15px;
-				}
-				.cf_dump .component .keyword {
-					color: ##FFFFFF;
-				}
+					.cf_dump .trace .preview {
+						border: 1px solid ##A0A0A0;
+						margin: 8px;
+						padding: 8px;
+					}
+						.cf_dump .trace .preview .block {
+							margin-top: 8px;
+						}
 
-				.cf_dump .object .col.colheader a {
-					color: inherit;
-					text-decoration: underline;
-				}
-				.cf_dump .object .row .rowcell {
-					font-family: Consolas, monospace;
-				}
-					.cf_dump .object .row .rowcell .returns,
-					.cf_dump .object .row .rowcell .type {
+					.cf_dump .trace .exception {
+						font-weight: bold;
+					}
+
+					.cf_dump .trace .class,
+					.cf_dump .trace .filler {
 						opacity: 0.50;
 					}
-					.cf_dump .object .row .rowcell .method {
-						color: ##0000FF;
-					}
-					.cf_dump .object .row .rowcell .returns,
-					.cf_dump .object .row .rowcell .params,
-					.cf_dump .object .row .rowcell .type {
+
+					.cf_dump .trace .file {
 						font-size: 11px;
 					}
 
-				.cf_dump .trace > .rowcell {
-					overflow: auto;
-					white-space: nowrap;
-				}
-
-				.cf_dump .trace .preview {
-					border: 1px solid ##A0A0A0;
-					margin: 8px;
-					padding: 8px;
-				}
-					.cf_dump .trace .preview .block {
-						margin-top: 8px;
+					.cf_dump .cfdump_array,
+					.cf_dump .cfdump_query,
+					.cf_dump .cfdump_struct,
+					.cf_dump .cfdump_xml {
+						color: ##000000;
 					}
 
-				.cf_dump .trace .exception {
-					font-weight: bold;
-				}
+			</style>
 
-				.cf_dump .trace .class,
-				.cf_dump .trace .filler {
-					opacity: 0.50;
-				}
+			<script>
 
-				.cf_dump .trace .file {
-					font-size: 11px;
-				}
+				document.addEventListener('DOMContentLoaded', function() {
 
-				.cf_dump .cfdump_array,
-				.cf_dump .cfdump_query,
-				.cf_dump .cfdump_struct,
-				.cf_dump .cfdump_xml {
-					color: ##000000;
-				}
+					if (typeof window.__cf_dump_head !== 'undefined') { return; }
+					window.__cf_dump_head = true;
 
-		</style>
+					var i;
 
-		<script>
+					var colHeaders = document.querySelectorAll('.cf_dump .colheader');
+					var toggleHeader = function(source, targets) {
 
-			document.addEventListener('DOMContentLoaded', function() {
+						var n, child;
 
-				if (typeof window.__cf_dump_head !== 'undefined') { return; }
-				window.__cf_dump_head = true;
+						if (source.getAttribute('data-cf_dump_collapsed') === null) {
 
-				var i;
+							for (n = 0; n < targets.length; n++) {
 
-				var colHeaders = document.querySelectorAll('.cf_dump .colheader');
-				var toggleHeader = function(source, targets) {
+								child = targets[n];
 
-					var n, child;
+								if (
+									child.classList.contains('row') ||
+									child.classList.contains('colfooter')
+								) {
 
-					if (source.getAttribute('data-cf_dump_collapsed') === null) {
-
-						for (n = 0; n < targets.length; n++) {
-
-							child = targets[n];
-
-							if (
-								child.classList.contains('row') ||
-								child.classList.contains('colfooter')
-							) {
-
-								child.classList.add('hidden');
+									child.classList.add('hidden');
+								}
 							}
-						}
 
-						source.setAttribute('data-cf_dump_collapsed', '');
-
-					} else {
-
-						for (n = 0; n < targets.length; n++) {
-
-							child = targets[n];
-
-							if (
-								child.classList.contains('row') ||
-								child.classList.contains('colfooter')
-							) {
-
-								child.classList.remove('hidden');
-							}
-						}
-
-						source.removeAttribute('data-cf_dump_collapsed');
-					}
-				};
-
-				for (i = 0; i < colHeaders.length; i++) {
-
-					colHeaders[i].addEventListener('click', function(event) {
-
-						if (event.target.nodeName !== 'A') {
-
-							var source = this;
-							var rows   = source.parentNode.children;
-
-							toggleHeader(source, rows);
-						}
-					});
-				}
-
-				var rowHeaders = document.querySelectorAll('.cf_dump .rowheader');
-				var toggleRowCell = function(source, targets) {
-
-					var n, child;
-
-					if (source.getAttribute('data-cf_dump_collapsed') === null) {
-
-						for (n = 0; n < targets.length; n++) {
-
-							child = targets[n];
-
-							if (
-								child.classList.contains('rowcell')
-							) {
-
-								child.classList.add('hidden');
-							}
-						}
-
-						source.setAttribute('data-cf_dump_collapsed', '');
-
-					} else {
-
-						for (n = 0; n < targets.length; n++) {
-
-							child = targets[n];
-
-							if (
-								child.classList.contains('rowcell')
-							) {
-
-								child.classList.remove('hidden');
-							}
-						}
-
-						source.removeAttribute('data-cf_dump_collapsed');
-					}
-				};
-
-				for (i = 0; i < rowHeaders.length; i++) {
-
-					rowHeaders[i].addEventListener('click', function() {
-
-						var source = this;
-						var column = source.getAttribute('data-cf_dump_querycolumn');
-						var cells;
-
-						if (source.getAttribute('data-cf_dump_querycolumn') !== null) {
-
-							var parent = source.parentNode.parentNode;
-							    cells  = parent.querySelectorAll('.rowcell[data-cf_dump_querycell="' + column + '"]');
-
-							toggleRowCell(source, cells);
+							source.setAttribute('data-cf_dump_collapsed', '');
 
 						} else {
 
-							cells = source.parentNode.children;
+							for (n = 0; n < targets.length; n++) {
 
-							toggleRowCell(source, cells);
+								child = targets[n];
+
+								if (
+									child.classList.contains('row') ||
+									child.classList.contains('colfooter')
+								) {
+
+									child.classList.remove('hidden');
+								}
+							}
+
+							source.removeAttribute('data-cf_dump_collapsed');
 						}
+					};
 
-					});
-				}
+					for (i = 0; i < colHeaders.length; i++) {
 
-			});
+						colHeaders[i].addEventListener('click', function(event) {
 
-		</script>
+							if (event.target.nodeName !== 'A') {
 
-	</cfif>
+								var source = this;
+								var rows   = source.parentNode.children;
 
-	<div class="cf_dump">
-		<cfif len(ATTRIBUTES.label)>
-			<div class="label">
-				#encodeForHtml(ATTRIBUTES.label)#
-			</div>
+								toggleHeader(source, rows);
+							}
+						});
+					}
+
+					var rowHeaders = document.querySelectorAll('.cf_dump .rowheader');
+					var toggleRowCell = function(source, targets) {
+
+						var n, child;
+
+						if (source.getAttribute('data-cf_dump_collapsed') === null) {
+
+							for (n = 0; n < targets.length; n++) {
+
+								child = targets[n];
+
+								if (
+									child.classList.contains('rowcell')
+								) {
+
+									child.classList.add('hidden');
+								}
+							}
+
+							source.setAttribute('data-cf_dump_collapsed', '');
+
+						} else {
+
+							for (n = 0; n < targets.length; n++) {
+
+								child = targets[n];
+
+								if (
+									child.classList.contains('rowcell')
+								) {
+
+									child.classList.remove('hidden');
+								}
+							}
+
+							source.removeAttribute('data-cf_dump_collapsed');
+						}
+					};
+
+					for (i = 0; i < rowHeaders.length; i++) {
+
+						rowHeaders[i].addEventListener('click', function() {
+
+							var source = this;
+							var column = source.getAttribute('data-cf_dump_querycolumn');
+							var cells;
+
+							if (source.getAttribute('data-cf_dump_querycolumn') !== null) {
+
+								var parent = source.parentNode.parentNode;
+									cells  = parent.querySelectorAll('.rowcell[data-cf_dump_querycell="' + column + '"]');
+
+								toggleRowCell(source, cells);
+
+							} else {
+
+								cells = source.parentNode.children;
+
+								toggleRowCell(source, cells);
+							}
+
+						});
+					}
+
+				});
+
+			</script>
+
 		</cfif>
-		<cfif structKeyExists(ATTRIBUTES, "var")>
 
-			<cfsavecontent variable="output">
-				#renderDump(ATTRIBUTES.var)#
-			</cfsavecontent>
+		<div class="cf_dump">
 
-			<cfif len(output)>
-				#output#
-			<cfelse>
-				<cfdump var="#ATTRIBUTES.var#">
+			<cfif len(ATTRIBUTES.label)>
+				<div class="label">
+					#encodeForHtml(ATTRIBUTES.label)#
+				</div>
 			</cfif>
 
-		<cfelse>
-			#renderDump()#
-		</cfif>
-	</div>
+			<cfif structKeyExists(ATTRIBUTES, "var")>
+				#renderDump(ATTRIBUTES.var)#
+			<cfelse>
+				#renderDump()#
+			</cfif>
 
-</cfoutput>
+		</div>
+
+	</cfoutput>
+</cfsavecontent>
+
+<cfoutput>#trimOutput(VARIABLES.output)#</cfoutput>
 
 <cfif ATTRIBUTES.abort>
-	<cfabort>
+	<cfsetting enableCFoutputOnly="false"><cfabort>
 </cfif>
 
 <cffunction name="renderDump" accessor="private" output="true" returnType="void">
@@ -1753,3 +1751,23 @@
 	<!--- multidimensional array is treated as one dimensional array --->
 	<cfreturn (ARGUMENTS.className & "[]")>
 </cffunction>
+
+<cffunction name="trimOutput" access="private" output="false" returnType="string">
+
+	<cfargument name="content" type="string" required="true">
+
+	<cfset LOCAL.result = trim(ARGUMENTS.content)>
+
+	<!--- remove all tabs --->
+	<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+
+	<!--- reduce line feeds --->
+	<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+
+	<!--- compact divs --->
+	<cfset LOCAL.result = reReplace(LOCAL.result, "</div>\n(?!=</div>)", "</div>", "ALL")>
+
+	<cfreturn LOCAL.result>
+</cffunction>
+
+<cfsetting enableCFoutputOnly="false">
