@@ -170,6 +170,7 @@
 				}
 
 				.cf_dump .var {
+					border-collapse: collapse;
 					display: table;
 					width: 100%;
 				}
