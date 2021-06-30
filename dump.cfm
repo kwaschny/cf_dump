@@ -182,6 +182,142 @@
 						letter-spacing: 1px;
 					}
 
+					<!--- BEGIN: colors --->
+
+						.cf_dump .var.array > .colheader {
+							background-color: ##009900;
+							border-color: ##009900;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.array > .row > .rowheader {
+							background-color: ##CCFFCC;
+							border-color: ##009900;
+							color: ##009900;
+						}
+						.cf_dump .var.array > .row > .rowcell {
+							border-color: ##009900;
+						}
+
+						.cf_dump .var.boolean > .colheader {
+							background-color: ##673AB7;
+							border-color: ##673AB7;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.boolean > .row > .rowcell {
+							border-color: ##673AB7;
+						}
+
+						.cf_dump .var.byte > .colheader {
+							background-color: ##FFCC44;
+							border-color: ##FFCC44;
+							color: ##000000;
+						}
+						.cf_dump .var.byte > .row > .rowcell {
+							border-color: ##FFCC44;
+						}
+
+						.cf_dump .var.component > .colheader {
+							background-color: ##1C434A;
+							border-color: ##1C434A;
+							color: ##B6DCE3;
+						}
+						.cf_dump .var.component > .row > .rowheader {
+							background-color: ##B6DCE3;
+							border-color: ##1C434A;
+							color: ##1C434A;
+						}
+						.cf_dump .var.component > .row > .rowcell {
+							border-color: ##1C434A;
+						}
+
+						.cf_dump .var.null > .colheader {
+							background-color: ##000000;
+							border-color: ##000000;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.null > .row > .rowcell {
+							border-color: ##000000;
+						}
+
+						.cf_dump .var.numeric > .colheader {
+							background-color: ##2196F3;
+							border-color: ##2196F3;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.numeric > .row > .rowcell {
+							border-color: ##2196F3;
+						}
+
+						.cf_dump .var.object > .colheader {
+							background-color: ##FF4444;
+							border-color: ##FF4444;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.object > .row > .rowheader {
+							background-color: ##FFDBDB;
+							border-color: ##FF4444;
+							color: ##FF4444;
+						}
+						.cf_dump .var.object > .row > .rowcell {
+							border-color: ##FF4444;
+						}
+
+						.cf_dump .var.query > .colheader {
+							background-color: ##AA66AA;
+							border-color: ##AA66AA;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.query > .colfooter {
+							border-color: ##AA66AA;
+						}
+						.cf_dump .var.query > .row > .rowheader {
+							background-color: ##FFDDFF;
+							border-color: ##AA66AA;
+							color: ##AA66AA;
+						}
+						.cf_dump .var.query > .row > .rowcell {
+							border-color: ##AA66AA;
+						}
+
+						.cf_dump .var.string > .colheader {
+							background-color: ##FF8000;
+							border-color: ##FF8000;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.string > .row > .rowcell {
+							border-color: ##FF8000;
+						}
+
+						.cf_dump .var.struct > .colheader {
+							background-color: ##4444CC;
+							border-color: ##4444CC;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.struct > .row > .rowheader {
+							background-color: ##CCDDFF;
+							border-color: ##4444CC;
+							color: ##4444CC;
+						}
+						.cf_dump .var.struct > .row > .rowcell {
+							border-color: ##4444CC;
+						}
+
+						.cf_dump .var.xml > .colheader {
+							background-color: ##808080;
+							border-color: ##808080;
+							color: ##FFFFFF;
+						}
+						.cf_dump .var.xml > .row > .rowheader {
+							background-color: ##EEEEEE;
+							border-color: ##808080;
+							color: ##808080;
+						}
+						.cf_dump .var.xml > .row > .rowcell {
+							border-color: ##808080;
+						}
+
+					<!--- END: colors --->
+
 				.cf_dump .colheader {
 					border: 1px solid;
 					cursor: pointer;
@@ -504,11 +640,8 @@
 			isNull(ARGUMENTS.var)
 		)>
 
-			<cfset LOCAL.cssDeepColor = "##000000">
-			<cfset LOCAL.cssForeColor = "##FFFFFF">
-
 			<div class="var null lowkey">
-				<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+				<div class="col colheader">
 					<span class="type">null</span>
 				</div>
 				<div class="row">
@@ -530,11 +663,8 @@
 
 				<cfcase value="java.lang.Boolean">
 
-					<cfset LOCAL.cssClass     = "boolean">
-					<cfset LOCAL.cssDeepColor = "##673AB7">
-					<cfset LOCAL.cssForeColor = "##FFFFFF">
-
-					<cfset LOCAL.type = "boolean">
+					<cfset LOCAL.type     = "boolean">
+					<cfset LOCAL.cssClass = "boolean">
 
 					<cfset ARGUMENTS.var = ( ARGUMENTS.var ? "true" : "false" )>
 
@@ -542,12 +672,9 @@
 
 				<cfcase value="java.lang.Byte">
 
-					<cfset LOCAL.cssClass     = "byte">
-					<cfset LOCAL.cssDeepColor = "##FFCC44">
-					<cfset LOCAL.cssForeColor = "##000000">
-
-					<cfset LOCAL.type    = "byte">
-					<cfset LOCAL.subType = "HEX">
+					<cfset LOCAL.type     = "byte">
+					<cfset LOCAL.subType  = "HEX">
+					<cfset LOCAL.cssClass = "byte">
 
 					<cfset ARGUMENTS.var = VARIABLES.String.format("%02X", [ ARGUMENTS.var ])>
 
@@ -555,23 +682,18 @@
 
 				<cfcase value="java.lang.Double">
 
-					<cfset LOCAL.cssClass     = "numeric">
-					<cfset LOCAL.cssDeepColor = "##2196F3">
-					<cfset LOCAL.cssForeColor = "##FFFFFF">
-
-					<cfset LOCAL.type    = "numeric">
-					<cfset LOCAL.subType = "double">
+					<cfset LOCAL.type     = "numeric">
+					<cfset LOCAL.subType  = "double">
+					<cfset LOCAL.cssClass = "numeric">
 
 				</cfcase>
 
 				<cfcase value="java.lang.String">
 
-					<cfset LOCAL.cssClass     = "string">
-					<cfset LOCAL.cssDeepColor = "##FF8000">
-					<cfset LOCAL.cssForeColor = "##FFFFFF">
-
 					<cfset LOCAL.len  = len(ARGUMENTS.var)>
-					<cfset LOCAL.type = "string [#LOCAL.len#]">
+
+					<cfset LOCAL.type     = "string [#LOCAL.len#]">
+					<cfset LOCAL.cssClass = "string">
 
 					<cfif LOCAL.len>
 
@@ -602,31 +724,24 @@
 
 				<cfcase value="java.lang.Integer">
 
-					<cfset LOCAL.cssClass     = "numeric">
-					<cfset LOCAL.cssDeepColor = "##2196F3">
-					<cfset LOCAL.cssForeColor = "##FFFFFF">
-
-					<cfset LOCAL.type    = "numeric">
-					<cfset LOCAL.subType = "integer">
+					<cfset LOCAL.type     = "numeric">
+					<cfset LOCAL.subType  = "integer">
+					<cfset LOCAL.cssClass = "numeric">
 
 				</cfcase>
 
 				<cfdefaultcase>
-
-					<cfset LOCAL.cssClass     = "simple">
-					<cfset LOCAL.cssDeepColor = "##FF8000">
-					<cfset LOCAL.cssForeColor = "##FFFFFF">
-
+					<cfset LOCAL.cssClass = "simple">
 				</cfdefaultcase>
 
 			</cfswitch>
 
 			<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="var #LOCAL.cssClass#">
-				<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+				<div class="col colheader">
 					<span class="type">#encodeForHtml(LOCAL.type)#</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 				</div>
 				<div class="row">
-					<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+					<div class="rowcell">
 						<cfif ATTRIBUTES.pre>
 							<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
 						<cfelse>
@@ -639,10 +754,6 @@
 		<!--- array --->
 		<cfelseif isArray(ARGUMENTS.var)>
 
-			<cfset LOCAL.cssDeepColor = "##009900">
-			<cfset LOCAL.cssForeColor = "##FFFFFF">
-			<cfset LOCAL.cssSoftColor = "##CCFFCC">
-
 			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
 			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len      = arrayLen(ARGUMENTS.var)>
@@ -650,11 +761,11 @@
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 				<div class="var array lowkey">
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">array</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 					</div>
 					<div class="row">
-						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell">
 							[references @#encodeForHtml(LOCAL.identity)#]
 						</div>
 					</div>
@@ -665,11 +776,11 @@
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
 				<div class="var array lowkey">
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">array [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 					<div class="row">
-						<div class="rowcell empty" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell empty">
 							[empty array]
 						</div>
 					</div>
@@ -681,7 +792,7 @@
 
 				<div class="var array">
 
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 
@@ -691,10 +802,10 @@
 						<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
 
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;" data-cf_dump_collapsed>
+								<div class="rowheader" data-cf_dump_collapsed>
 									#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
 								</div>
-								<div class="rowcell lowkey hidden" style="border-color: #LOCAL.cssDeepColor#;">
+								<div class="rowcell lowkey hidden">
 									<div class="cellcontent">
 										<cftry>
 											#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
@@ -716,10 +827,10 @@
 						<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
 
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									#LOCAL.i#
 								</div>
-								<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+								<div class="rowcell lowkey">
 									<div class="cellcontent">
 										[top reached]
 									</div>
@@ -731,10 +842,10 @@
 						</cfif>
 
 						<div class="row">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								#LOCAL.i#
 							</div>
-							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							<div class="rowcell">
 								<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
 									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
 								<cfelse>
@@ -762,18 +873,14 @@
 				(LOCAL.meta.Type eq "component")
 			)>
 
-				<cfset LOCAL.cssDeepColor = "##1C434A">
-				<cfset LOCAL.cssForeColor = "##B6DCE3">
-				<cfset LOCAL.cssSoftColor = "##B6DCE3">
-
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 					<div class="var component lowkey">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<div class="col colheader">
 							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span>
 						</div>
 						<div class="row">
-							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							<div class="rowcell">
 								[references @#encodeForHtml(LOCAL.identity)#]
 							</div>
 						</div>
@@ -858,7 +965,7 @@
 					<!--- END: private fields --->
 
 					<div class="var component">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<div class="col colheader">
 							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span><br>
 							<cfif len(LOCAL.extends)>
 								<span class="extends"><span class="keyword">extends</span> <span class="subtype">#encodeForHtml(LOCAL.extends)#</span></span><br>
@@ -878,10 +985,10 @@
 							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.field)>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#encodeForHtml(LOCAL.field)#
 									</div>
-									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell lowkey">
 										<div class="cellcontent">
 											[blacklisted]
 										</div>
@@ -893,10 +1000,10 @@
 								<cfset LOCAL.element = ARGUMENTS.var[LOCAL.field]>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#encodeForHtml(LOCAL.field)#
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										<cfif isNull(LOCAL.element)>
 											#renderDump()#
 										<cfelse>
@@ -924,12 +1031,12 @@
 							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.field)>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										<span title="This field is private and can only be accessed from inside the component.">
 											👁&nbsp;#encodeForHtml(LOCAL.field)#
 										</span>
 									</div>
-									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell lowkey">
 										<div class="cellcontent">
 											[blacklisted]
 										</div>
@@ -941,12 +1048,12 @@
 								<cfset LOCAL.element = LOCAL.privateScope[LOCAL.field]>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										<span title="This field is private and can only be accessed from inside the component.">
 											👁&nbsp;#encodeForHtml(LOCAL.field)#
 										</span>
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										#renderDump(LOCAL.element, ARGUMENTS.depth)#
 									</div>
 								</div>
@@ -962,10 +1069,6 @@
 			<!--- object --->
 			<cfelse>
 
-				<cfset LOCAL.cssDeepColor = "##FF4444">
-				<cfset LOCAL.cssForeColor = "##FFFFFF">
-				<cfset LOCAL.cssSoftColor = "##FFDBDB">
-
 				<cfset LOCAL.meta    = ARGUMENTS.var.getClass()>
 				<cfset LOCAL.subType = LOCAL.meta.getName()>
 
@@ -977,7 +1080,7 @@
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 					<div class="var object lowkey">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<div class="col colheader">
 							<cfif len(LOCAL.docsLink)>
 								<span class="type">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" class="subtype">#encodeForHtml(LOCAL.subType)#</a>
 							<cfelse>
@@ -985,7 +1088,7 @@
 							</cfif>
 						</div>
 						<div class="row">
-							<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+							<div class="rowcell">
 								[references @#encodeForHtml(LOCAL.identity)#]
 							</div>
 						</div>
@@ -1000,10 +1103,6 @@
 						(find("coldfusion.", LOCAL.subType) eq 1) and
 						isInstanceOf(ARGUMENTS.var, "coldfusion.runtime.NeoException")
 					)>
-
-						<cfset LOCAL.cssDeepColor = "##000000">
-						<cfset LOCAL.cssForeColor = "##FFFF80">
-						<cfset LOCAL.cssSoftColor = "##FFFF80">
 
 						<cfset LOCAL.exceptionFields = [
 							"NativeErrorCode",
@@ -1020,11 +1119,11 @@
 						]>
 
 						<div class="var exception">
-							<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+							<div class="col colheader">
 								ColdFusion Exception
 							</div>
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									Type
 								</div>
 								<div class="rowcell">
@@ -1032,7 +1131,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									Message
 								</div>
 								<div class="rowcell">
@@ -1040,7 +1139,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									Detail
 								</div>
 								<div class="rowcell">
@@ -1048,7 +1147,7 @@
 								</div>
 							</div>
 							<div class="row trace">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									TagContext
 								</div>
 								<div class="rowcell">
@@ -1072,7 +1171,7 @@
 								</cfif>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#LOCAL.exceptionField#
 									</div>
 									<div class="rowcell">
@@ -1082,7 +1181,7 @@
 
 							</cfloop>
 							<div class="row trace">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									StackTrace
 								</div>
 								<div class="rowcell">
@@ -1185,7 +1284,7 @@
 						<!--- END: prepare methods --->
 
 						<div class="var object">
-							<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+							<div class="col colheader">
 								<cfif len(LOCAL.docsLink)>
 									<span class="type">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" class="subtype">#encodeForHtml(LOCAL.subType)#</a> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 								<cfelse>
@@ -1194,10 +1293,10 @@
 							</div>
 							<cfif not arrayIsEmpty(LOCAL.constructors)>
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										<span class="type">constructors</span>
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										<div class="cellcontent">
 											<cfloop array="#LOCAL.constructors#" index="LOCAL.method">
 												#LOCAL.method#<br>
@@ -1208,10 +1307,10 @@
 							</cfif>
 							<cfif not arrayIsEmpty(LOCAL.fields)>
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										<span class="type">fields</span>
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										<div class="cellcontent">
 											<cfloop array="#LOCAL.fields#" index="LOCAL.field">
 												#LOCAL.field#<br>
@@ -1222,10 +1321,10 @@
 							</cfif>
 							<cfif not arrayIsEmpty(LOCAL.methods)>
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										<span class="type">methods</span>
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										<div class="cellcontent">
 											<cfloop array="#LOCAL.methods#" index="LOCAL.method">
 												#LOCAL.method#<br>
@@ -1245,18 +1344,14 @@
 		<!--- xml --->
 		<cfelseif isXmlNode(ARGUMENTS.var)>
 
-			<cfset LOCAL.cssDeepColor = "##808080">
-			<cfset LOCAL.cssForeColor = "##FFFFFF">
-			<cfset LOCAL.cssSoftColor = "##EEEEEE">
-
 			<cfif isXmlDoc(ARGUMENTS.var)>
 
 				<div class="var xml">
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">XmlDocument</span> <span class="subtype"></span>
 					</div>
 					<div class="row">
-						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell">
 							#renderDump(ARGUMENTS.var.XmlRoot, ARGUMENTS.depth)#
 						</div>
 					</div>
@@ -1265,11 +1360,11 @@
 			<cfelse>
 
 				<div class="var xml">
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">#( isXmlRoot(ARGUMENTS.var) ? "XmlRoot" : "XmlNode" )#</span>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlName
 						</div>
 						<div class="rowcell">
@@ -1277,7 +1372,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlNsPrefix
 						</div>
 						<div class="rowcell">
@@ -1285,7 +1380,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlNsURI
 						</div>
 						<div class="rowcell">
@@ -1293,7 +1388,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlText
 						</div>
 						<div class="rowcell">
@@ -1301,7 +1396,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlComment
 						</div>
 						<div class="rowcell">
@@ -1309,7 +1404,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlAttributes
 						</div>
 						<div class="rowcell">
@@ -1317,7 +1412,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 							XmlChildren
 						</div>
 						<div class="rowcell">
@@ -1346,10 +1441,6 @@
 
 			</cfif>
 
-			<cfset LOCAL.cssDeepColor = "##4444CC">
-			<cfset LOCAL.cssForeColor = "##FFFFFF">
-			<cfset LOCAL.cssSoftColor = "##CCDDFF">
-
 			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
 			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len      = structCount(ARGUMENTS.var)>
@@ -1357,11 +1448,11 @@
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
 				<div class="var struct lowkey">
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">struct</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 					</div>
 					<div class="row">
-						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell">
 							[references @#encodeForHtml(LOCAL.identity)#]
 						</div>
 					</div>
@@ -1371,12 +1462,12 @@
 
 				<div class="var struct lowkey">
 
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">struct [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 
 					<div class="row">
-						<div class="rowcell empty" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell empty">
 							[empty struct]
 						</div>
 					</div>
@@ -1393,10 +1484,6 @@
 					isInstanceOf(ARGUMENTS.var, "lucee.runtime.exp.CatchBlockImpl")
 				)>
 
-					<cfset LOCAL.cssDeepColor = "##000000">
-					<cfset LOCAL.cssForeColor = "##FFFF80">
-					<cfset LOCAL.cssSoftColor = "##FFFF80">
-
 					<cfset LOCAL.exceptionFields = [
 						"Type",
 						"Message",
@@ -1406,11 +1493,11 @@
 					]>
 
 					<div class="var exception">
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<div class="col colheader">
 							Lucee Exception
 						</div>
 						<div class="row">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								Type
 							</div>
 							<div class="rowcell">
@@ -1418,7 +1505,7 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								Message
 							</div>
 							<div class="rowcell">
@@ -1426,7 +1513,7 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								Detail
 							</div>
 							<div class="rowcell">
@@ -1434,7 +1521,7 @@
 							</div>
 						</div>
 						<div class="row trace">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								TagContext
 							</div>
 							<div class="rowcell">
@@ -1468,7 +1555,7 @@
 							</cfif>
 
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									#LOCAL.exceptionField#
 								</div>
 								<div class="rowcell">
@@ -1479,7 +1566,7 @@
 						</cfloop>
 
 						<div class="row trace">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								StackTrace
 							</div>
 							<div class="rowcell">
@@ -1499,7 +1586,7 @@
 
 					<div class="var struct">
 
-						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+						<div class="col colheader">
 							<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 						</div>
 
@@ -1508,10 +1595,10 @@
 							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#encodeForHtml(LOCAL.key)#
 									</div>
-									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell lowkey">
 										<div class="cellcontent">
 											[blacklisted]
 										</div>
@@ -1521,10 +1608,10 @@
 							<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#encodeForHtml(LOCAL.key)#
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
 									</div>
 								</div>
@@ -1533,10 +1620,10 @@
 							<cfelse>
 
 								<div class="row">
-									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+									<div class="rowheader">
 										#encodeForHtml(LOCAL.key)#
 									</div>
-									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+									<div class="rowcell">
 										#renderDump()#
 									</div>
 								</div>
@@ -1553,10 +1640,6 @@
 
 		<!--- query --->
 		<cfelseif isQuery(ARGUMENTS.var)>
-
-			<cfset LOCAL.cssDeepColor = "##AA66AA">
-			<cfset LOCAL.cssForeColor = "##FFFFFF">
-			<cfset LOCAL.cssSoftColor = "##FFDDFF">
 
 			<cfif VARIABLES.isLucee>
 				<cfset LOCAL.columns = ARGUMENTS.var.columnArray()>
@@ -1575,14 +1658,14 @@
 
 				<div class="var query">
 
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">query [#LOCAL.len#]</span>
 					</div>
 					<div class="row">
-						<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+						<div class="rowheader">
 						</div>
 						<cfloop array="#LOCAL.columns#" index="LOCAL.column">
-							<div data-cf_dump_querycolumn="#encodeForHtmlAttribute(LOCAL.column)#" class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#; width: #LOCAL.columnWidth#%;">
+							<div data-cf_dump_querycolumn="#encodeForHtmlAttribute(LOCAL.column)#" class="rowheader" style="width: #LOCAL.columnWidth#%;">
 								#encodeForHtml(LOCAL.column)#
 							</div>
 						</cfloop>
@@ -1594,11 +1677,11 @@
 						<cfif (ATTRIBUTES.top gte 0) and (ARGUMENTS.var.currentRow gt ATTRIBUTES.top)>
 
 							<div class="row">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+								<div class="rowheader">
 									#ARGUMENTS.var.currentRow#
 								</div>
 								<cfloop array="#LOCAL.columns#" index="LOCAL.column">
-									<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#; width: #LOCAL.columnWidth#%;">
+									<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell lowkey" style="width: #LOCAL.columnWidth#%;">
 										<div class="cellcontent">
 											[top reached]
 										</div>
@@ -1611,11 +1694,11 @@
 						</cfif>
 
 						<div class="row">
-							<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
+							<div class="rowheader">
 								#ARGUMENTS.var.currentRow#
 							</div>
 							<cfloop array="#LOCAL.columns#" index="LOCAL.column">
-								<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell" style="border-color: #LOCAL.cssDeepColor#; width: #LOCAL.columnWidth#%;">
+								<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell" style="width: #LOCAL.columnWidth#%;">
 									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth)#
 								</div>
 							</cfloop>
@@ -1629,19 +1712,19 @@
 
 				<div class="var query lowkey">
 
-					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
+					<div class="col colheader">
 						<span class="type">query [0]</span>
 					</div>
 					<cfif LOCAL.columnCount>
 						<div class="row">
 							<cfloop array="#LOCAL.columns#" index="LOCAL.column">
-								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#; width: #LOCAL.columnWidth#%;">
+								<div class="rowheader" style="width: #LOCAL.columnWidth#%;">
 									#encodeForHtml(LOCAL.column)#
 								</div>
 							</cfloop>
 						</div>
 					</cfif>
-					<div class="colfooter empty" style="border-color: #LOCAL.cssDeepColor#;">
+					<div class="colfooter empty">
 						[empty query]
 					</div>
 				</div>
