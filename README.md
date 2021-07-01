@@ -1,6 +1,6 @@
 # A ColdFusion custom tag to improve the native cfdump tag
 
-The `<cfdump>` tag is very handy to debug data. However, the output of it, especially in Adobe ColdFusion, unfortunately is very sparse. And while Lucee does way better here, there is still room for improvement. This custom tag `<cf_dump>` is written from scratch, offers more insight and renders faster than the native cfdump (compared to ACF).
+The `<cfdump>` tag is very handy to debug data. However, the output of it, especially in Adobe ColdFusion, unfortunately is very sparse. And while Lucee does way better here, there is still room for improvement. This custom tag `<cf_dump>` is written from scratch, offers more insight and usually renders faster than the native (ACF) cfdump.
 
 Anyway, pictures are worth a thousand words:
 
@@ -281,7 +281,7 @@ Abort the request after `<cf_dump>` has been executed. This is a convenience sho
 
 ### embed
 
-Embed `<style>` and `<script>` content, required for the visual representation. Specify this when using `<cf_dump>` in a separate output context such as `<cfmail>` or `<cfsavecontent>`. Default: `false`
+Embed `<style>` and `<script>` content, required for the visual representation. Specify this when using `<cf_dump>` in a separate output context such as `<cfsavecontent>`. **Note:** When you want to send the dump via mail, you should use `<cf_dumpmail>` instead. Default: `false`
 
 ## Overriding tag attribute defaults
 
@@ -297,3 +297,11 @@ _(That's **two** underscores `__`, then `cf_dump`, another single underscore `_`
 This will disable the whitespace indicator for strings for the rest of the request.
 
 You can override defaults at any point, but I recommend specifying them in the Application.cfc's `onRequestStart` function.
+
+## `cf_dumpmail`
+
+When you want to send a dump via HTML mail, you might encounter a few style related issues that depend on the e-mail client (CSS support). For this reason `<cf_dumpmail>` exists. Here are the differences:
+
+- colors are inlined (for better compatibility)
+- `<style>` tag is always present (attribute `embed` always true/doesn't exist)
+- `<script>` tag is not present (as e-mail clients do not execute JavaScript anyway)
