@@ -451,7 +451,7 @@
 				<cfdefaultcase>
 
 					<cfset LOCAL.cssClass     = "simple">
-					<cfset LOCAL.cssDeepColor = "##FF8000">
+					<cfset LOCAL.cssDeepColor = "##FF4444">
 					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
 				</cfdefaultcase>

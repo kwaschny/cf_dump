@@ -282,6 +282,15 @@
 								border-color: ##AA66AA;
 							}
 
+							.cf_dump .var.simple > .colheader {
+								background-color: ##FF4444;
+								border-color: ##FF4444;
+								color: ##FFFFFF;
+							}
+							.cf_dump .var.simple > .row > .rowcell {
+								border-color: ##FF4444;
+							}
+
 							.cf_dump .var.string > .colheader {
 								background-color: ##FF8000;
 								border-color: ##FF8000;
