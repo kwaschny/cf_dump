@@ -5,6 +5,8 @@
 	<cfset boolY = (0 lt 1)>
 	<cfset boolN = (0 gt 1)>
 
+	<cfset char = javaCast("char", "A")>
+
 	<cfset stringE = "">
 	<cfset stringF = repeatString("lorem ipsum dolor sit amet", 10)>
 
@@ -38,6 +40,7 @@
 	<cfset arrayF = [
 		javaCast("null", ""),
 		boolY,
+		char,
 		stringE,
 		integer,
 		long,
@@ -51,6 +54,7 @@
 	<cfset structF = {
 		"null":      javaCast("null", ""),
 		"bool":      boolN,
+		"char":      char,
 		"string":    stringF,
 		"integer":   integer,
 		"long":      long,
@@ -93,6 +97,9 @@
 		<h2>bool</h2>
 		<cf_dump var="#boolY#">
 		<cf_dump var="#boolN#">
+
+		<h2>char</h2>
+		<cf_dump var="#char#">
 
 		<h2>string</h2>
 		<cf_dump var="#stringE#">
