@@ -526,7 +526,7 @@
 								<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
 									#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
 								</div>
-								<div class="rowcell lowkey hidden" style="border-color: #LOCAL.cssDeepColor#;">
+								<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
 									<div class="cellcontent">
 										<cftry>
 											#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
