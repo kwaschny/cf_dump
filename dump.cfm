@@ -233,6 +233,20 @@
 								border-color: ##1C434A;
 							}
 
+							.cf_dump .var.exception > .colheader {
+								background-color: ##000000;
+								border-color: ##000000;
+								color: ##FFFF80;
+							}
+							.cf_dump .var.exception > .row > .rowheader {
+								background-color: ##FFFF80;
+								border-color: ##000000;
+								color: ##000000;
+							}
+							.cf_dump .var.exception > .row > .rowcell {
+								border-color: ##000000;
+							}
+
 							.cf_dump .var.null > .colheader {
 								background-color: ##000000;
 								border-color: ##000000;
