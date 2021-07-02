@@ -174,6 +174,7 @@
 					font-size: 11px;
 					letter-spacing: 1px;
 					padding: 1px 2px 2px 2px;
+					user-select: none;
 					white-space: nowrap;
 				}
 					.cf_dump .type {
@@ -193,16 +194,10 @@
 					padding: 2px;
 					white-space: nowrap;
 				}
-					.cf_dump .colfooter.hidden {
-						display: none;
-					}
 
 				.cf_dump .row {
 					display: table-row;
 				}
-					.cf_dump .row.hidden {
-						display: none;
-					}
 
 				.cf_dump .rowheader {
 					border: 1px solid;
@@ -230,10 +225,6 @@
 					padding: 2px;
 					vertical-align: top;
 				}
-					.cf_dump .rowcell.hidden .var,
-					.cf_dump .rowcell.hidden .cellcontent {
-						display: none;
-					}
 
 					.cf_dump .string .rowcell {
 						word-break: break-all;
@@ -348,7 +339,7 @@
 			<cfset LOCAL.cssDeepColor = "##000000">
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 
-			<div class="var null lowkey">
+			<div class="var null lowkey empty">
 				<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 					<span class="type">null</span>
 				</div>
@@ -364,8 +355,6 @@
 
 			<cfset LOCAL.type    = ARGUMENTS.var.getClass().getName()>
 			<cfset LOCAL.subType = "">
-
-			<cfset LOCAL.title = "">
 
 			<cfswitch expression="#LOCAL.type#">
 
@@ -422,8 +411,6 @@
 							)
 						)>
 
-							<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. Every whitespace has been replaced with a dot.">
-
 							<cfset LOCAL.cssClass &= " whitespace">
 							<cfset ARGUMENTS.var   = reReplace(ARGUMENTS.var, "\s", ".", "ALL")>
 
@@ -466,7 +453,7 @@
 
 			</cfswitch>
 
-			<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="var #LOCAL.cssClass#">
+			<div class="var #LOCAL.cssClass#">
 				<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 					<span class="type">#encodeForHtml(LOCAL.type)#</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
 				</div>
@@ -509,12 +496,12 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
-				<div class="var array lowkey">
+				<div class="var array lowkey empty">
 					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 						<span class="type">array [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 					<div class="row">
-						<div class="rowcell empty" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
 							[empty array]
 						</div>
 					</div>
@@ -703,6 +690,7 @@
 					<!--- END: private fields --->
 
 					<div class="var component">
+
 						<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span><br>
 							<cfif len(LOCAL.extends)>
@@ -770,9 +758,7 @@
 
 								<div class="row">
 									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										<span title="This field is private and can only be accessed from inside the component.">
-											👁&nbsp;#encodeForHtml(LOCAL.field)#
-										</span>
+										<span>👁&nbsp;#encodeForHtml(LOCAL.field)#</span>
 									</div>
 									<div class="rowcell lowkey" style="border-color: #LOCAL.cssDeepColor#;">
 										<div class="cellcontent">
@@ -787,9 +773,7 @@
 
 								<div class="row">
 									<div class="rowheader" style="background-color: #LOCAL.cssSoftColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssDeepColor#;">
-										<span title="This field is private and can only be accessed from inside the component.">
-											👁&nbsp;#encodeForHtml(LOCAL.field)#
-										</span>
+										<span>👁&nbsp;#encodeForHtml(LOCAL.field)#</span>
 									</div>
 									<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
 										#renderDump(LOCAL.element, ARGUMENTS.depth)#
@@ -933,14 +917,14 @@
 								<div class="rowcell">
 									<div class="cellcontent">
 
-									<span class="exception">
-										#encodeForHtml( ARGUMENTS.var.toString() )#
-									</span>
+										<span class="exception">
+											#encodeForHtml( ARGUMENTS.var.toString() )#
+										</span>
 
-									<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
-									<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
-										<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
-									</cfloop>
+										<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
+										<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
+											<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
+										</cfloop>
 
 									</div>
 								</div>
@@ -1214,18 +1198,15 @@
 
 			<cfelseif not LOCAL.len>
 
-				<div class="var struct lowkey">
-
+				<div class="var struct lowkey empty">
 					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 						<span class="type">struct [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
-
 					<div class="row">
-						<div class="rowcell empty" style="border-color: #LOCAL.cssDeepColor#;">
+						<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
 							[empty struct]
 						</div>
 					</div>
-
 				</div>
 
 			<cfelse>
@@ -1283,23 +1264,25 @@
 								TagContext
 							</div>
 							<div class="rowcell">
+								<div class="cellcontent">
 
-								<span class="exception">
-									#encodeForHtml( ARGUMENTS.var.Message )#
-								</span>
+									<span class="exception">
+										#encodeForHtml( ARGUMENTS.var.Message )#
+									</span>
 
-								<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+									<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
 
-									<cfset LOCAL.preserveNL = LOCAL.entry.codePrintHTML>
-									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, chr(9), "&nbsp;&nbsp;&nbsp;&nbsp;", "ALL")>
+										<cfset LOCAL.preserveNL = LOCAL.entry.codePrintHTML>
+										<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, chr(9), "&nbsp;&nbsp;&nbsp;&nbsp;", "ALL")>
 
-									<div class="preview">
-										<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
-										<div class="block">#LOCAL.preserveNL#</div>
-									</div>
+										<div class="preview">
+											<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+											<div class="block">#LOCAL.preserveNL#</div>
+										</div>
 
-								</cfloop>
+									</cfloop>
 
+								</div>
 							</div>
 						</div>
 
@@ -1328,14 +1311,16 @@
 								StackTrace
 							</div>
 							<div class="rowcell">
+								<div class="cellcontent">
 
-								<cfset LOCAL.preserveNL = encodeForHtml(ARGUMENTS.var.StackTrace)>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xd;", "", "ALL")>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xa;", "<br>", "ALL")>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##x9;", "&nbsp;&nbsp;", "ALL")>
+									<cfset LOCAL.preserveNL = encodeForHtml(ARGUMENTS.var.StackTrace)>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xd;", "", "ALL")>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xa;", "<br>", "ALL")>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##x9;", "&nbsp;&nbsp;", "ALL")>
 
-								#LOCAL.preserveNL#
+									#LOCAL.preserveNL#
 
+								</div>
 							</div>
 						</div>
 					</div>
@@ -1472,8 +1457,7 @@
 
 			<cfelse>
 
-				<div class="var query lowkey">
-
+				<div class="var query lowkey empty">
 					<div class="col colheader" style="background-color: #LOCAL.cssDeepColor#; border-color: #LOCAL.cssDeepColor#; color: #LOCAL.cssForeColor#;">
 						<span class="type">query [0]</span>
 					</div>
@@ -1486,7 +1470,7 @@
 							</cfloop>
 						</div>
 					</cfif>
-					<div class="colfooter empty" style="border-color: #LOCAL.cssDeepColor#;">
+					<div class="colfooter" style="border-color: #LOCAL.cssDeepColor#;">
 						[empty query]
 					</div>
 				</div>
