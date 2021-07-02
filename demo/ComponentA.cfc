@@ -1,4 +1,4 @@
-﻿component implements="InterfaceX,InterfaceY" {
+component implements="InterfaceX,InterfaceY" {
 
 	THIS.publicVarA = THIS;
 	THIS.publicVarB = [ "" ];
