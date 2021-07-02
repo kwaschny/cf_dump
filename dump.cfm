@@ -738,6 +738,14 @@
 
 				</cfcase>
 
+				<cfcase value="java.lang.Long">
+
+					<cfset LOCAL.type     = "numeric">
+					<cfset LOCAL.subType  = "long">
+					<cfset LOCAL.cssClass = "numeric">
+
+				</cfcase>
+
 				<cfdefaultcase>
 					<cfset LOCAL.cssClass = "simple">
 				</cfdefaultcase>

@@ -9,6 +9,7 @@
 	<cfset stringF = repeatString("lorem ipsum dolor sit amet", 10)>
 
 	<cfset integer = javaCast("int", 0)>
+	<cfset long    = javaCast("long", 0)>
 	<cfset numeric = (0 + 0)>
 
 	<cfset componentA    = new demo.ComponentA( new demo.ComponentB() )>
@@ -39,6 +40,7 @@
 		boolY,
 		stringE,
 		integer,
+		long,
 		numeric,
 		componentA,
 		object,
@@ -51,6 +53,7 @@
 		"bool":      boolN,
 		"string":    stringF,
 		"integer":   integer,
+		"long":      long,
 		"numeric":   numeric,
 		"array":     arrayE,
 		"struct":    structE,
@@ -95,8 +98,9 @@
 		<cf_dump var="#stringE#">
 		<cf_dump var="#stringF#">
 
-		<h2>integer/numeric</h2>
+		<h2>integer/long/numeric</h2>
 		<cf_dump var="#integer#">
+		<cf_dump var="#long#">
 		<cf_dump var="#numeric#">
 
 		<h2>array</h2>
