@@ -185,7 +185,7 @@
 							letter-spacing: 1px;
 						}
 
-						<!--- BEGIN: colors --->
+						/* BEGIN: colors */
 
 							.cf_dump .var.array > .colheader {
 								background-color: ##009900;
@@ -342,7 +342,7 @@
 								border-color: ##808080;
 							}
 
-						<!--- END: colors --->
+						/* END: colors */
 
 					.cf_dump .colheader {
 						border: 1px solid;
@@ -351,6 +351,7 @@
 						font-size: 11px;
 						letter-spacing: 1px;
 						padding: 1px 2px 2px 2px;
+						user-select: none;
 						white-space: nowrap;
 					}
 						.cf_dump .colheader[data-cf_dump_collapsed] {
@@ -495,7 +496,11 @@
 					if (typeof window.__cf_dump_head !== 'undefined') { return; }
 					window.__cf_dump_head = true;
 
-					var i;
+					var i, b;
+
+					var toggleVisibility = function() {
+
+					};
 
 					var colHeaders = document.querySelectorAll('.cf_dump .colheader');
 					var toggleHeader = function(source, targets) {
@@ -542,14 +547,42 @@
 
 						colHeaders[i].addEventListener('click', function(event) {
 
-							if (event.target.nodeName !== 'A') {
+							if (event.target.nodeName === 'A') { return; }
 
-								var source = this;
-								var rows   = source.parentNode.children;
+							var source = this;
+							var rows   = source.parentNode.children;
 
-								toggleHeader(source, rows);
-							}
+							toggleHeader(source, rows);
 						});
+
+						b = colHeaders[i].querySelector('a.toggle');
+						if (b) {
+
+							b.addEventListener('click', function(event) {
+
+								var rows = this.parentNode.parentNode.children;
+
+								for (var n = 1; n < rows.length; n++) {
+
+									var row       = rows[n];
+									var rowHeader = ( (row.children.length === 2) ? row.children[0] : undefined );
+									var cellVar   = ( rowHeader ? row.children[1].children[0] : row.children[0].children[0] );
+
+									if (rowHeader && cellVar.classList.contains('empty')) {
+
+										toggleRowCell(rowHeader, row.children);
+
+									} else if (cellVar.children.length > 0) {
+
+										var toggle = cellVar.children[0].querySelector('a.toggle');
+										if (toggle) {
+
+											toggle.click();
+										}
+									}
+								}
+							});
+						}
 					}
 
 					var rowHeaders = document.querySelectorAll('.cf_dump .rowheader');
@@ -662,7 +695,7 @@
 			isNull(ARGUMENTS.var)
 		)>
 
-			<div class="var null lowkey">
+			<div class="var null lowkey empty">
 				<div class="col colheader">
 					<span class="type">null</span>
 				</div>
@@ -805,12 +838,12 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
-				<div class="var array lowkey">
+				<div class="var array lowkey empty">
 					<div class="col colheader">
 						<span class="type">array [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 					<div class="row">
-						<div class="rowcell empty">
+						<div class="rowcell">
 							[empty array]
 						</div>
 					</div>
@@ -823,7 +856,7 @@
 				<div class="var array">
 
 					<div class="col colheader">
-						<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+						<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span> <a title="Toggle empty elements." class="toggle">🗜</a>
 					</div>
 
 					<!--- Byte[] --->
@@ -995,8 +1028,9 @@
 					<!--- END: private fields --->
 
 					<div class="var component">
+
 						<div class="col colheader">
-							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span><br>
+							<span class="type">component</span> <span class="subtype">#encodeForHtml(LOCAL.meta.FullName)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span> <a title="Toggle empty elements." class="toggle">🗜</a><br>
 							<cfif len(LOCAL.extends)>
 								<span class="extends"><span class="keyword">extends</span> <span class="subtype">#encodeForHtml(LOCAL.extends)#</span></span><br>
 							</cfif>
@@ -1150,7 +1184,7 @@
 
 						<div class="var exception">
 							<div class="col colheader">
-								ColdFusion Exception
+								ColdFusion Exception <a title="Toggle empty elements." class="toggle">🗜</a>
 							</div>
 							<div class="row">
 								<div class="rowheader">
@@ -1217,14 +1251,14 @@
 								<div class="rowcell">
 									<div class="cellcontent">
 
-									<span class="exception">
-										#encodeForHtml( ARGUMENTS.var.toString() )#
-									</span>
+										<span class="exception">
+											#encodeForHtml( ARGUMENTS.var.toString() )#
+										</span>
 
-									<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
-									<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
-										<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
-									</cfloop>
+										<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
+										<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
+											<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
+										</cfloop>
 
 									</div>
 								</div>
@@ -1378,7 +1412,7 @@
 
 				<div class="var xml">
 					<div class="col colheader">
-						<span class="type">XmlDocument</span> <span class="subtype"></span>
+						<span class="type">XmlDocument</span> <span class="subtype"></span> <a title="Toggle empty elements." class="toggle">🗜</a>
 					</div>
 					<div class="row">
 						<div class="rowcell">
@@ -1391,7 +1425,7 @@
 
 				<div class="var xml">
 					<div class="col colheader">
-						<span class="type">#( isXmlRoot(ARGUMENTS.var) ? "XmlRoot" : "XmlNode" )#</span>
+						<span class="type">#( isXmlRoot(ARGUMENTS.var) ? "XmlRoot" : "XmlNode" )#</span> <a title="Toggle empty elements." class="toggle">🗜</a>
 					</div>
 					<div class="row">
 						<div class="rowheader">
@@ -1490,18 +1524,15 @@
 
 			<cfelseif not LOCAL.len>
 
-				<div class="var struct lowkey">
-
+				<div class="var struct lowkey empty">
 					<div class="col colheader">
 						<span class="type">struct [0]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
-
 					<div class="row">
-						<div class="rowcell empty">
+						<div class="rowcell">
 							[empty struct]
 						</div>
 					</div>
-
 				</div>
 
 			<cfelse>
@@ -1524,7 +1555,7 @@
 
 					<div class="var exception">
 						<div class="col colheader">
-							Lucee Exception
+							Lucee Exception  <a title="Toggle empty elements." class="toggle">🗜</a>
 						</div>
 						<div class="row">
 							<div class="rowheader">
@@ -1555,23 +1586,25 @@
 								TagContext
 							</div>
 							<div class="rowcell">
+								<div class="cellcontent">
 
-								<span class="exception">
-									#encodeForHtml( ARGUMENTS.var.Message )#
-								</span>
+									<span class="exception">
+										#encodeForHtml( ARGUMENTS.var.Message )#
+									</span>
 
-								<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+									<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
 
-									<cfset LOCAL.preserveNL = LOCAL.entry.codePrintHTML>
-									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, chr(9), "&nbsp;&nbsp;&nbsp;&nbsp;", "ALL")>
+										<cfset LOCAL.preserveNL = LOCAL.entry.codePrintHTML>
+										<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, chr(9), "&nbsp;&nbsp;&nbsp;&nbsp;", "ALL")>
 
-									<div class="preview">
-										<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
-										<div class="block">#LOCAL.preserveNL#</div>
-									</div>
+										<div class="preview">
+											<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+											<div class="block">#LOCAL.preserveNL#</div>
+										</div>
 
-								</cfloop>
+									</cfloop>
 
+								</div>
 							</div>
 						</div>
 
@@ -1600,14 +1633,16 @@
 								StackTrace
 							</div>
 							<div class="rowcell">
+								<div class="cellcontent">
 
-								<cfset LOCAL.preserveNL = encodeForHtml(ARGUMENTS.var.StackTrace)>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xd;", "", "ALL")>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xa;", "<br>", "ALL")>
-								<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##x9;", "&nbsp;&nbsp;", "ALL")>
+									<cfset LOCAL.preserveNL = encodeForHtml(ARGUMENTS.var.StackTrace)>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xd;", "", "ALL")>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##xa;", "<br>", "ALL")>
+									<cfset LOCAL.preserveNL = replace(LOCAL.preserveNL, "&##x9;", "&nbsp;&nbsp;", "ALL")>
 
-								#LOCAL.preserveNL#
+									#LOCAL.preserveNL#
 
+								</div>
 							</div>
 						</div>
 					</div>
@@ -1617,7 +1652,7 @@
 					<div class="var struct">
 
 						<div class="col colheader">
-							<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span>
+							<span class="type">struct [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span> <a title="Toggle empty elements." class="toggle">🗜</a>
 						</div>
 
 						<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
@@ -1740,8 +1775,7 @@
 
 			<cfelse>
 
-				<div class="var query lowkey">
-
+				<div class="var query lowkey empty">
 					<div class="col colheader">
 						<span class="type">query [0]</span>
 					</div>
@@ -1754,7 +1788,7 @@
 							</cfloop>
 						</div>
 					</cfif>
-					<div class="colfooter empty">
+					<div class="colfooter">
 						[empty query]
 					</div>
 				</div>
