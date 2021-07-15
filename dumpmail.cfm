@@ -437,9 +437,11 @@
 
 				<cfcase value="java.lang.Long">
 
-					<cfset LOCAL.type     = "numeric">
-					<cfset LOCAL.subType  = "long">
-					<cfset LOCAL.cssClass = "numeric">
+					<cfset LOCAL.type         = "numeric">
+					<cfset LOCAL.subType      = "long">
+					<cfset LOCAL.cssClass     = "numeric">
+					<cfset LOCAL.cssDeepColor = "##2196F3">
+					<cfset LOCAL.cssForeColor = "##FFFFFF">
 
 				</cfcase>
 
