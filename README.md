@@ -279,6 +279,37 @@ Discard all output before `<cf_dump>` is executed. This is handy if you want to 
 
 Abort the request after `<cf_dump>` has been executed. This is a convenience shortcut for `<cfabort>`. Default: `false`
 
+### rewrite
+
+Allow rewriting simple values before dumping. Provide one or more functions in an array that will be invoked as callback before outputting any simple value. The callback has 3 arguments. Argument 1 is the simple value. Argument 2 is the context of the variable. Argument 3 depends on the context, see table below. Default: `[]`
+
+#### Example
+
+```cfml
+<cfscript>
+	function a2b(value, context, data) {
+		return replace(ARGUMENTS.value, "a", "b");
+	}
+	function b2c(value, context, data) {
+		return replace(ARGUMENTS.value, "b", "c");
+	}
+</cfscript>
+
+<cf_dump rewrite="#[ a2b, b2c ]#" var="a">
+<!--- outputs "c" --->
+```
+
+#### Contexts
+
+| context | data |
+| ------- | ---- |
+| struct | string, name of the key |
+| array | numeric, array index of the value |
+| query | array, column name and row index: `[ column, row ]` |
+| component | string, name of the field/property |
+| exception | string, name of the field/property |
+| xml | string, name of the node's field/property |
+
 ### embed
 
 Embed `<style>` and `<script>` content, required for the visual representation. Specify this when using `<cf_dump>` in a separate output context such as `<cfsavecontent>`. **Note:** When you want to send the dump via mail, you should use `<cf_dumpmail>` instead. Default: `false`
