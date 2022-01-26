@@ -97,6 +97,16 @@
 	</cfif>
 	<cfparam name="ATTRIBUTES.reset" type="boolean" default="false">
 
+	<!--- rewrite --->
+	<cfif (
+		(not structKeyExists(ATTRIBUTES, "rewrite")) and
+		structKeyExists(REQUEST, "__cf_dump_rewrite") and
+		isArray(REQUEST["__cf_dump_rewrite"])
+	)>
+		<cfset ATTRIBUTES.rewrite = REQUEST["__cf_dump_rewrite"]>
+	</cfif>
+	<cfparam name="ATTRIBUTES.rewrite" type="array" default="#[]#">
+
 	<!--- top --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "top")) and
@@ -190,8 +200,10 @@
 
 <cffunction name="renderDump" accessor="private" output="true" returnType="void">
 
-	<cfargument name="var"   type="any"     required="false">
-	<cfargument name="depth" type="numeric" default="-1">
+	<cfargument name="var"     type="any"     required="false">
+	<cfargument name="depth"   type="numeric" default="-1">
+	<cfargument name="ctxType" type="string"  default="">
+	<cfargument name="ctxData" type="any"     default="">
 
 	<cfset ARGUMENTS.depth++>
 
@@ -216,6 +228,10 @@
 
 		<!--- simple --->
 		<cfelseif isSimpleValue(ARGUMENTS.var)>
+
+			<cfloop array="#ATTRIBUTES.rewrite#" index="LOCAL.func">
+				<cfset ARGUMENTS.var = LOCAL.func(ARGUMENTS.var, ARGUMENTS.ctxType, ARGUMENTS.ctxData)>
+			</cfloop>
 
 			<cfset LOCAL.type    = getClassName(ARGUMENTS.var)>
 			<cfset LOCAL.subType = "">
@@ -470,9 +486,9 @@
 							</div>
 							<div class="rowcell">
 								<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
-									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth, "array", LOCAL.i)#
 								<cfelse>
-									#renderDump()#
+									#renderDump(ctxType: "array", ctxData: LOCAL.i)#
 								</cfif>
 							</div>
 						</div>
@@ -629,9 +645,9 @@
 									</div>
 									<div class="rowcell">
 										<cfif isNull(LOCAL.element)>
-											#renderDump()#
+											#renderDump(ctxType: "component", ctxData: LOCAL.field)#
 										<cfelse>
-											#renderDump(LOCAL.element, ARGUMENTS.depth)#
+											#renderDump(LOCAL.element, ARGUMENTS.depth, "component", LOCAL.field)#
 										</cfif>
 									</div>
 								</div>
@@ -678,7 +694,7 @@
 										</span>
 									</div>
 									<div class="rowcell">
-										#renderDump(LOCAL.element, ARGUMENTS.depth)#
+										#renderDump(LOCAL.element, ARGUMENTS.depth, "component", LOCAL.field)#
 									</div>
 								</div>
 
@@ -751,7 +767,7 @@
 									Type
 								</div>
 								<div class="rowcell">
-									#renderDump(ARGUMENTS.var.getType(), ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var.getType(), ARGUMENTS.depth, "exception", "Type")#
 								</div>
 							</div>
 							<div class="row">
@@ -759,7 +775,7 @@
 									Message
 								</div>
 								<div class="rowcell">
-									#renderDump(ARGUMENTS.var.getMessage(), ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var.getMessage(), ARGUMENTS.depth, "exception", "Message")#
 								</div>
 							</div>
 							<div class="row">
@@ -767,7 +783,7 @@
 									Detail
 								</div>
 								<div class="rowcell">
-									#renderDump(ARGUMENTS.var.getDetail(), ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var.getDetail(), ARGUMENTS.depth, "exception", "Detail")#
 								</div>
 							</div>
 							<div class="row trace">
@@ -799,7 +815,7 @@
 										#LOCAL.exceptionField#
 									</div>
 									<div class="rowcell">
-										#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth)#
+										#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth, "exception", LOCAL.exceptionField)#
 									</div>
 								</div>
 
@@ -1060,7 +1076,7 @@
 					</div>
 					<div class="row">
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlRoot, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlRoot, ARGUMENTS.depth, "xml")#
 						</div>
 					</div>
 				</div>
@@ -1076,7 +1092,7 @@
 							XmlName
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlName, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlName, ARGUMENTS.depth, "xml", "XmlName")#
 						</div>
 					</div>
 					<div class="row">
@@ -1084,7 +1100,7 @@
 							XmlNsPrefix
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth, "xml", "XmlNsPrefix")#
 						</div>
 					</div>
 					<div class="row">
@@ -1092,7 +1108,7 @@
 							XmlNsURI
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth, "xml", "XmlNsURI")#
 						</div>
 					</div>
 					<div class="row">
@@ -1100,7 +1116,7 @@
 							XmlText
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth, "xml", "XmlText")#
 						</div>
 					</div>
 					<div class="row">
@@ -1108,7 +1124,7 @@
 							XmlComment
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth, "xml", "XmlComment")#
 						</div>
 					</div>
 					<div class="row">
@@ -1116,7 +1132,7 @@
 							XmlAttributes
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth, "xml", "XmlAttributes")#
 						</div>
 					</div>
 					<div class="row">
@@ -1124,7 +1140,7 @@
 							XmlChildren
 						</div>
 						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
+							#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth, "xml", "XmlChildren")#
 						</div>
 					</div>
 				</div>
@@ -1206,7 +1222,7 @@
 								Type
 							</div>
 							<div class="rowcell">
-								#renderDump(ARGUMENTS.var.Type, ARGUMENTS.depth)#
+								#renderDump(ARGUMENTS.var.Type, ARGUMENTS.depth, "exception", "Type")#
 							</div>
 						</div>
 						<div class="row">
@@ -1214,7 +1230,7 @@
 								Message
 							</div>
 							<div class="rowcell">
-								#renderDump(ARGUMENTS.var.Message, ARGUMENTS.depth)#
+								#renderDump(ARGUMENTS.var.Message, ARGUMENTS.depth, "exception", "Message")#
 							</div>
 						</div>
 						<div class="row">
@@ -1222,7 +1238,7 @@
 								Detail
 							</div>
 							<div class="rowcell">
-								#renderDump(ARGUMENTS.var.Detail, ARGUMENTS.depth)#
+								#renderDump(ARGUMENTS.var.Detail, ARGUMENTS.depth, "exception", "Detail")#
 							</div>
 						</div>
 						<div class="row trace">
@@ -1266,7 +1282,7 @@
 									#LOCAL.exceptionField#
 								</div>
 								<div class="rowcell">
-									#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth, "exception", LOCAL.exceptionField)#
 								</div>
 							</div>
 
@@ -1321,7 +1337,7 @@
 										#encodeForHtml(LOCAL.key)#
 									</div>
 									<div class="rowcell">
-										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
+										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth, "struct", LOCAL.key)#
 									</div>
 								</div>
 
@@ -1333,7 +1349,7 @@
 										#encodeForHtml(LOCAL.key)#
 									</div>
 									<div class="rowcell">
-										#renderDump()#
+										#renderDump(ctxType: "struct", ctxData: LOCAL.key)#
 									</div>
 								</div>
 
@@ -1408,7 +1424,7 @@
 							</div>
 							<cfloop array="#LOCAL.columns#" index="LOCAL.column">
 								<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell" style="width: #LOCAL.columnWidth#%;">
-									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth, "query", [ LOCAL.column, ARGUMENTS.var.currentRow ])#
 								</div>
 							</cfloop>
 						</div>

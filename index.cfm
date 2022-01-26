@@ -308,6 +308,45 @@
 		<h2>No Encoding</h2>
 		<cf_dump byteEncoding var="#bytesUTF8#">
 
+	<h1>rewrite</h1>
+
+		<cfscript>
+			function upperA(value) {
+
+				return replace(ARGUMENTS.value, "a", "A");
+			}
+			function rewriteAtoB(value) {
+
+				return replace(ARGUMENTS.value, "A", "B");
+			}
+			function oddeven(value, type, data) {
+
+				if (ARGUMENTS.type neq "array") { return ARGUMENTS.value; }
+
+				return ( (ARGUMENTS.data % 2) ? "odd" : "even" );
+			}
+			function foobar(value, type, data) {
+
+				if (ARGUMENTS.type neq "struct") { return ARGUMENTS.value; }
+
+				return ( (ARGUMENTS.data eq "foo") ? "bar" : ARGUMENTS.value );
+			}
+			function queryCR(value, type, data) {
+
+				if (ARGUMENTS.type neq "query") { return ARGUMENTS.value; }
+
+				return arrayToList(ARGUMENTS.data, ", ");
+			}
+		</cfscript>
+
+		<cfset d = {
+			"string": "a",
+			"array":  [ "a", "b", "c" ],
+			"struct": { "foo": "", "bar": "foo" },
+			"query":  queryF
+		}>
+		<cf_dump rewrite="#[ upperA, rewriteAtoB, oddeven, foobar, queryCR ]#" var="#d#">
+
 	<h1>abort / reset</h1>
 
 		<cf_dump abort>
