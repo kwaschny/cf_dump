@@ -768,6 +768,90 @@
 							</div>
 						</div>
 
+					<!--- check for other exceptions (Java) --->
+					<cfelseif isInstanceOf(ARGUMENTS.var, "java.lang.Exception")>
+
+						<cfset LOCAL.exceptionFields = [
+							"NativeErrorCode",
+							"SqlState",
+							"Sql",
+							"QueryError",
+							"Where",
+							"ErrNumber",
+							"MissingFileName",
+							"LockName",
+							"LockOperation",
+							"ErrorCode",
+							"ExtendedInfo"
+						]>
+
+						<div class="var exception">
+							<div class="col colheader">
+								Java Exception <a title="Toggle empty elements." class="toggle">🗜</a>
+							</div>
+							<div class="row">
+								<div class="rowheader">
+									Message
+								</div>
+								<div class="rowcell">
+									#renderDump(ARGUMENTS.var.getMessage(), ARGUMENTS.depth)#
+								</div>
+							</div>
+							<div class="row trace">
+								<div class="rowheader">
+									TagContext
+								</div>
+								<div class="rowcell">
+									<div class="cellcontent">
+
+										<span class="exception">
+											#encodeForHtml( ARGUMENTS.var.getMessage() )#
+										</span>
+
+										<cfloop array="#ARGUMENTS.var.TagContext#" index="LOCAL.entry">
+											<br>&nbsp;&nbsp;<span class="filler">at</span> #encodeForHtml(LOCAL.entry.Template)# <span class="filler">in Line</span> #LOCAL.entry.Line#
+										</cfloop>
+
+									</div>
+								</div>
+							</div>
+							<cfloop array="#LOCAL.exceptionFields#" index="LOCAL.exceptionField">
+
+								<cfif not structKeyExists(ARGUMENTS.var, LOCAL.exceptionField)>
+									<cfcontinue>
+								</cfif>
+
+								<div class="row">
+									<div class="rowheader">
+										#LOCAL.exceptionField#
+									</div>
+									<div class="rowcell">
+										#renderDump(ARGUMENTS.var[LOCAL.exceptionField], ARGUMENTS.depth)#
+									</div>
+								</div>
+
+							</cfloop>
+							<div class="row trace">
+								<div class="rowheader">
+									StackTrace
+								</div>
+								<div class="rowcell">
+									<div class="cellcontent">
+
+										<span class="exception">
+											#encodeForHtml( ARGUMENTS.var.toString() )#
+										</span>
+
+										<cfset LOCAL.trace = ARGUMENTS.var.getStackTrace()>
+										<cfloop array="#LOCAL.trace#" index="LOCAL.entry">
+											<br>&nbsp;&nbsp;<span class="class">at #encodeForHtml( LOCAL.entry.getClassName() )#</span>.<span class="method">#encodeForHtml( LOCAL.entry.getMethodName() )#</span> <span class="file">(#encodeForHtml( LOCAL.entry.getFileName() )#:#LOCAL.entry.getLineNumber()#</span>)
+										</cfloop>
+
+									</div>
+								</div>
+							</div>
+						</div>
+
 					<cfelse>
 
 						<!--- BEGIN: prepare constructors --->
