@@ -259,15 +259,15 @@
 						<cfif (
 							(not ATTRIBUTES.pre) and
 							ATTRIBUTES.wsWarning and (
-								reFind("^\s", ARGUMENTS.var) or
-								reFind("\s$", ARGUMENTS.var)
+								reFind("^[\s|#chr(160)#]", ARGUMENTS.var) or
+								reFind("[\s|#chr(160)#]$", ARGUMENTS.var)
 							)
 						)>
 
 							<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. Every whitespace has been replaced with a dot.">
 
 							<cfset LOCAL.cssClass &= " whitespace">
-							<cfset ARGUMENTS.var   = reReplace(ARGUMENTS.var, "\s", ".", "ALL")>
+							<cfset ARGUMENTS.var   = reReplace(ARGUMENTS.var, "[\s|#chr(160)#]", ".", "ALL")>
 
 						</cfif>
 
