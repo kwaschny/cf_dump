@@ -112,6 +112,10 @@
 <cfset VARIABLES.System = createObject("java", "java.lang.System")>
 <cfset VARIABLES.String = createObject("java", "java.lang.String")>
 
+<cfset VARIABLES.Pattern  = createObject("java", "java.util.regex.Pattern")>
+<cfset VARIABLES.rePreWS  = VARIABLES.Pattern.compile("^(\p{Space}|[^\p{Print}])")>
+<cfset VARIABLES.rePostWS = VARIABLES.Pattern.compile("(\p{Space}|[^\p{Print}])$")>
+
 <!--- track already resolved variables to prevent infinite recursion --->
 <cfset VARIABLES.resolvedVars = {}>
 
@@ -406,13 +410,15 @@
 						<cfif (
 							(not ATTRIBUTES.pre) and
 							ATTRIBUTES.wsWarning and (
-								reFind("^[\s|#chr(160)#]", ARGUMENTS.var) or
-								reFind("[\s|#chr(160)#]$", ARGUMENTS.var)
+								VARIABLES.rePreWS.matcher(ARGUMENTS.var).find() or
+								VARIABLES.rePostWS.matcher(ARGUMENTS.var).find()
 							)
 						)>
 
 							<cfset LOCAL.cssClass &= " whitespace">
-							<cfset ARGUMENTS.var   = reReplace(ARGUMENTS.var, "[\s|#chr(160)#]", ".", "ALL")>
+
+							<cfset ARGUMENTS.var = VARIABLES.rePreWS.matcher(ARGUMENTS.var).replaceFirst(".")>
+							<cfset ARGUMENTS.var = VARIABLES.rePostWS.matcher(ARGUMENTS.var).replaceFirst(".")>
 
 						</cfif>
 

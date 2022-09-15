@@ -244,9 +244,17 @@
 
 	<h1>wsWarning</h1>
 
-		<cf_dump var="#chr(10)#">
-		<cf_dump var="abc ">
-		<cf_dump var="	abc">
+		<!--- ASCII excerpt --->
+		<cf_dump var="#chr(9)#x">           <!--- horizontal tab --->
+		<cf_dump var="x#chr(13)##chr(10)#"> <!--- carriage return --->
+		<cf_dump var="#chr(32)#">           <!--- space --->
+
+		<!--- Unicode excerpt --->
+		<cf_dump var="#chr(160)##chr(32)#x">    <!--- non-breaking space --->
+		<cf_dump var="x#chr(173)#">             <!--- soft hyphen --->
+		<cf_dump var="#chr(8194)#x#chr(8195)#"> <!--- en/em space --->
+		<cf_dump var="x#chr(8232)#">            <!--- line separator --->
+		<cf_dump var="x#chr(8233)#">            <!--- paragraph separator --->
 
 		<h2>no warning</h2>
 		<cf_dump wsWarning="false" var=" | ">
