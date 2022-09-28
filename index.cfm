@@ -99,11 +99,19 @@
 		<cf_dump var="#boolN#">
 
 		<h2>char</h2>
-		<cf_dump var="#char#">
+		<cf_dump var="#char#"> <!--- LDEV-3598 --->
 
 		<h2>string</h2>
 		<cf_dump var="#stringE#">
 		<cf_dump var="#stringF#">
+		<cf_dump var="a¢฿𝄞">
+		<!---
+			(assuming UTF-8)
+			a = 1 Byte  (1 char)
+			¢ = 2 Bytes (1 char)
+			฿ = 3 Bytes (1 char)
+			𝄞 = 4 Bytes (2 chars)
+		--->
 
 		<h2>integer/long/numeric</h2>
 		<cf_dump var="#integer#">
@@ -255,6 +263,14 @@
 		<cf_dump var="#chr(8194)#x#chr(8195)#"> <!--- en/em space --->
 		<cf_dump var="x#chr(8232)#">            <!--- line separator --->
 		<cf_dump var="x#chr(8233)#">            <!--- paragraph separator --->
+
+		<!--- Emoji --->
+		<cf_dump var="😃">
+		<cf_dump var=" 😃">
+		<cf_dump var="😃 ">
+		<cf_dump var=" 😃 ">
+		<cf_dump var="😃 😃">
+		<cf_dump var=" 😃 😃 ">
 
 		<h2>no warning</h2>
 		<cf_dump wsWarning="false" var=" | ">

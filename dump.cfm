@@ -117,14 +117,15 @@
 	</cfif>
 	<cfparam name="ATTRIBUTES.wsWarning" type="boolean" default="true">
 
+	<cfif ATTRIBUTES.wsWarning>
+		<cfset VARIABLES.Character    = createObject("java", "java.lang.Character")>
+		<cfset VARIABLES.wsCodepoints = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 133, 160, 173, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8204, 8205, 8206, 8207, 8288, 8232, 8233, 8239, 8287, 9248, 9250, 9251, 10240, 12288, 65279, 65296 ]>
+	</cfif>
+
 <!--- END: attributes --->
 
 <cfset VARIABLES.System = createObject("java", "java.lang.System")>
 <cfset VARIABLES.String = createObject("java", "java.lang.String")>
-
-<cfset VARIABLES.Pattern  = createObject("java", "java.util.regex.Pattern")>
-<cfset VARIABLES.rePreWS  = VARIABLES.Pattern.compile("^(\p{Space}|[^\p{Print}])")>
-<cfset VARIABLES.rePostWS = VARIABLES.Pattern.compile("(\p{Space}|[^\p{Print}])$")>
 
 <!--- track already resolved variables to prevent infinite recursion --->
 <cfset VARIABLES.resolvedVars = {}>
@@ -253,8 +254,14 @@
 				<cfcase value="java.lang.String">
 
 					<cfset LOCAL.len = len(ARGUMENTS.var)>
+					<cfset LOCAL.cps = ARGUMENTS.var.codePointCount(0, LOCAL.len)>
 
-					<cfset LOCAL.type     = "string [#LOCAL.len#]">
+					<cfif LOCAL.len eq LOCAL.cps>
+						<cfset LOCAL.type = "string [#LOCAL.len#]">
+					<cfelse>
+						<cfset LOCAL.type = "string [chars: #LOCAL.len#, codepoints: #LOCAL.cps#]">
+					</cfif>
+
 					<cfset LOCAL.cssClass = "string">
 
 					<cfif LOCAL.len>
@@ -262,18 +269,53 @@
 						<!--- whitespace warning --->
 						<cfif (
 							(not ATTRIBUTES.pre) and
-							ATTRIBUTES.wsWarning and (
-								VARIABLES.rePreWS.matcher(ARGUMENTS.var).find() or
-								VARIABLES.rePostWS.matcher(ARGUMENTS.var).find()
-							)
+							ATTRIBUTES.wsWarning
 						)>
 
-							<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. Every whitespace has been replaced with a dot.">
+							<cfset LOCAL.firstCP = ARGUMENTS.var.codePointAt(0)>
+							<cfset LOCAL.lastCP  = ARGUMENTS.var.codePointAt(LOCAL.len -1)>
+							<cfset LOCAL.wsFirst = (arrayFind(VARIABLES.wsCodepoints, LOCAL.firstCP) gt 0)>
+							<cfset LOCAL.wsLast  = (arrayFind(VARIABLES.wsCodepoints, LOCAL.lastCP)  gt 0)>
 
-							<cfset LOCAL.cssClass &= " whitespace">
+							<cfif LOCAL.wsFirst or LOCAL.wsLast>
 
-							<cfset ARGUMENTS.var = VARIABLES.rePreWS.matcher(ARGUMENTS.var).replaceFirst(".")>
-							<cfset ARGUMENTS.var = VARIABLES.rePostWS.matcher(ARGUMENTS.var).replaceFirst(".")>
+								<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. All whitespaces have been replaced with a dot.">
+
+								<cfset LOCAL.cssClass &= " whitespace">
+
+								<!--- BEGIN: rebuild string with replaced whitespaces --->
+
+									<cfset LOCAL.cpArray = []>
+									<cfset LOCAL.offset  = 0>
+
+									<cfloop condition="true">
+
+										<cfif LOCAL.offset gte LOCAL.len>
+											<cfbreak>
+										</cfif>
+
+										<cfset LOCAL.cp   = ARGUMENTS.var.codePointAt(LOCAL.offset)>
+										<cfset LOCAL.isWS = (arrayFind(VARIABLES.wsCodepoints, LOCAL.cp) gt 0)>
+
+										<cfif LOCAL.isWS>
+											<cfset LOCAL.cpArray.add(46)> <!--- 46 = . --->
+										<cfelse>
+											<cfset LOCAL.cpArray.add(LOCAL.cp)>
+										</cfif>
+
+										<cfset LOCAL.offset += VARIABLES.Character.charCount(LOCAL.cp)>
+
+									</cfloop>
+
+									<cfset ARGUMENTS.var = createObject("java", "java.lang.String").init(
+										javaCast("int[]", LOCAL.cpArray),
+										0,
+										arrayLen(LOCAL.cpArray)
+									)>
+
+								<!--- END: rebuild string with replaced whitespaces --->
+
+							</cfif>
 
 						</cfif>
 
@@ -317,13 +359,13 @@
 						<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
 						<cfif ATTRIBUTES.pre>
 							<cfif VARIABLES.isLucee>
-							<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
-						<cfelse>
+								<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
+							<cfelse>
 								<pre>#htmlEditFormat(ARGUMENTS.var)#</pre>
 							</cfif>
 						<cfelse>
 							<cfif VARIABLES.isLucee>
-							#encodeForHtml(ARGUMENTS.var)#
+								#encodeForHtml(ARGUMENTS.var)#
 							<cfelse>
 								#htmlEditFormat(ARGUMENTS.var)#
 							</cfif>
