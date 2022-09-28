@@ -467,10 +467,19 @@
 				</div>
 				<div class="row">
 					<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
+						<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
 						<cfif ATTRIBUTES.pre>
+							<cfif VARIABLES.isLucee>
 							<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
 						<cfelse>
+								<pre>#htmlEditFormat(ARGUMENTS.var)#</pre>
+							</cfif>
+						<cfelse>
+							<cfif VARIABLES.isLucee>
 							#encodeForHtml(ARGUMENTS.var)#
+							<cfelse>
+								#htmlEditFormat(ARGUMENTS.var)#
+							</cfif>
 						</cfif>
 					</div>
 				</div>
