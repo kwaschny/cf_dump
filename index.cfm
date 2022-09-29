@@ -159,6 +159,13 @@
 			</cfcatch>
 		</cftry>
 
+		<cftry>
+			<cfthrow object="#createObject("java", "java.lang.Exception").init("This is a Java Exception.")#">
+			<cfcatch>
+				<cf_dump var="#CFCATCH#">
+			</cfcatch>
+		</cftry>
+
 	<h1>circular dump</h1>
 
 		<!--- struct circle --->
