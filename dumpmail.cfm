@@ -185,7 +185,7 @@
 					.cf_dump .colheader a {
 						color: inherit;
 						text-decoration: none;
-				}
+					}
 					.cf_dump .type {
 						font-weight: bold;
 					}
@@ -362,7 +362,7 @@
 		<!--- simple --->
 		<cfelseif isSimpleValue(ARGUMENTS.var)>
 
-			<cfset LOCAL.type    = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.type    = getClassName(ARGUMENTS.var)>
 			<cfset LOCAL.subType = "">
 
 			<cfswitch expression="#LOCAL.type#">
@@ -538,7 +538,7 @@
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##CCFFCC">
 
-			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.subType  = getClassName(ARGUMENTS.var)>
 			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len      = arrayLen(ARGUMENTS.var)>
 
@@ -859,7 +859,7 @@
 				<cfset LOCAL.cssSoftColor = "##FFDBDB">
 
 				<cfset LOCAL.meta    = ARGUMENTS.var.getClass()>
-				<cfset LOCAL.subType = LOCAL.meta.getName()>
+				<cfset LOCAL.subType = getClassName(ARGUMENTS.var)>
 
 				<cfset LOCAL.docsLink = "">
 				<cfif find("java.", LOCAL.subType) eq 1>
@@ -889,7 +889,7 @@
 
 					<!--- check for exception instance (ColdFusion) --->
 					<cfif (
-						(find("coldfusion.", LOCAL.subType) eq 1) and
+						(find("coldfusion", LOCAL.subType) eq 1) and
 						isInstanceOf(ARGUMENTS.var, "coldfusion.runtime.NeoException")
 					)>
 
@@ -1330,7 +1330,7 @@
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 			<cfset LOCAL.cssSoftColor = "##CCDDFF">
 
-			<cfset LOCAL.subType  = ARGUMENTS.var.getClass().getName()>
+			<cfset LOCAL.subType  = getClassName(ARGUMENTS.var)>
 			<cfset LOCAL.identity = VARIABLES.System.identityHashCode(ARGUMENTS.var)>
 			<cfset LOCAL.len      = structCount(ARGUMENTS.var)>
 
@@ -1632,6 +1632,22 @@
 
 	</cfoutput>
 
+</cffunction>
+
+<cffunction name="getClassName" accessor="private" output="false" returnType="string">
+
+	<cfargument name="obj" type="any" required="true">
+
+	<cftry>
+
+		<cfreturn ARGUMENTS.obj.getClass().getName()>
+
+		<cfcatch>
+			<!--- checked "Disable access to internal ColdFusion Java components" setting in CF Admin causes this --->
+		</cfcatch>
+	</cftry>
+
+	<cfreturn "coldfusion">
 </cffunction>
 
 <cffunction name="transformClassName" accessor="private" output="false" returnType="string">
