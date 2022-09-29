@@ -215,6 +215,10 @@
 		.cf_dump .colheader[data-cf_dump_collapsed] {
 			opacity: 0.50;
 		}
+		.cf_dump .colheader a {
+			color: inherit;
+			text-decoration: none;
+		}
 		.cf_dump .type {
 			font-weight: bold;
 		}

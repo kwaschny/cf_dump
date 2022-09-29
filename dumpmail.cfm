@@ -182,6 +182,10 @@
 					user-select: none;
 					white-space: nowrap;
 				}
+					.cf_dump .colheader a {
+						color: inherit;
+						text-decoration: none;
+				}
 					.cf_dump .type {
 						font-weight: bold;
 					}
