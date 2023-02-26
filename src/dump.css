@@ -34,9 +34,11 @@
 		display: table;
 		width: 100%;
 	}
+		.cf_dump .var .rowheader.whitespace::before,
 		.cf_dump .var.whitespace .colheader::before {
-			content: '⚠️ '
+			content: '⚠️'
 		}
+		.cf_dump .var .rowheader.whitespace,
 		.cf_dump .var.whitespace .rowcell {
 			color: #F00000;
 			font-family: Consolas, monospace;

@@ -278,9 +278,17 @@
 		<cf_dump var=" 😃 ">
 		<cf_dump var="😃 😃">
 		<cf_dump var=" 😃 😃 ">
+		<cf_dump var="#{ " 😃 ": " 😃 " }#">
+
+		<h2>key only</h2>
+		<cf_dump wsWarning="key" var="#{ " 😃 ": " 😃 " }#">
+
+		<h2>value only</h2>
+		<cf_dump wsWarning="value" var="#{ " 😃 ": " 😃 " }#">
 
 		<h2>no warning</h2>
 		<cf_dump wsWarning="false" var=" | ">
+		<cf_dump wsWarning="false" var="#{ " 😃 ": " 😃 " }#">
 
 	<h1>blacklist</h1>
 

@@ -107,20 +107,32 @@
 	</cfif>
 	<cfparam name="ATTRIBUTES.top" type="numeric" default="-1">
 
-	<!--- wsWarning --->
-	<cfif (
-		(not structKeyExists(ATTRIBUTES, "wsWarning")) and
-		structKeyExists(REQUEST, "__cf_dump_wsWarning") and
-		isBoolean(REQUEST["__cf_dump_wsWarning"])
-	)>
-		<cfset ATTRIBUTES.wsWarning = REQUEST["__cf_dump_wsWarning"]>
-	</cfif>
-	<cfparam name="ATTRIBUTES.wsWarning" type="boolean" default="true">
+	<!--- BEGIN: wsWarning --->
 
-	<cfif ATTRIBUTES.wsWarning>
-		<cfset VARIABLES.Character    = createObject("java", "java.lang.Character")>
-		<cfset VARIABLES.wsCodepoints = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 133, 160, 173, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8204, 8205, 8206, 8207, 8288, 8232, 8233, 8239, 8287, 9248, 9250, 9251, 10240, 12288, 65279, 65296 ]>
-	</cfif>
+		<cfif (
+			(not structKeyExists(ATTRIBUTES, "wsWarning")) and
+			structKeyExists(REQUEST, "__cf_dump_wsWarning") and
+			isSimpleValue(REQUEST["__cf_dump_wsWarning"])
+		)>
+			<cfset ATTRIBUTES.wsWarning = REQUEST["__cf_dump_wsWarning"]>
+		</cfif>
+		<cfparam name="ATTRIBUTES.wsWarning" type="string" default="true">
+
+		<cfset VARIABLES.wsInspectKey = false>
+		<cfset VARIABLES.wsInspectVal = false>
+
+		<cfif ATTRIBUTES.wsWarning contains "key">
+			<cfset VARIABLES.wsInspectKey = true>
+		</cfif>
+		<cfif ATTRIBUTES.wsWarning contains "value">
+			<cfset VARIABLES.wsInspectVal = true>
+		</cfif>
+		<cfif isBoolean(ATTRIBUTES.wsWarning) and ATTRIBUTES.wsWarning>
+			<cfset VARIABLES.wsInspectKey = true>
+			<cfset VARIABLES.wsInspectVal = true>
+		</cfif>
+
+	<!--- END: wsWarning --->
 
 <!--- END: attributes --->
 
@@ -146,7 +158,7 @@
 			<cfset REQUEST["__cf_dump_head"] = true>
 
 			<style>
-				.cf_dump{background-color:##fff;border-spacing:0;color:##000;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;width:100%}.cf_dump .var.whitespace .colheader::before{content:'⚠️ '}.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
+				.cf_dump{background-color:##fff;border-spacing:0;color:##000;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;width:100%}.cf_dump .var .rowheader.whitespace::before,.cf_dump .var.whitespace .colheader::before{content:'⚠️'}.cf_dump .var .rowheader.whitespace,.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
 				.cf_dump .var.array>.row>.rowcell{border-color:##090}.cf_dump .var.boolean>.colheader{background-color:##673ab7;border-color:##673ab7;color:##fff}.cf_dump .var.boolean>.row>.rowcell{border-color:##673ab7}.cf_dump .var.byte>.colheader{background-color:##fc4;border-color:##fc4;color:##000}.cf_dump .var.byte>.row>.rowcell{border-color:##fc4}.cf_dump .var.component>.colheader{background-color:##1c434a;border-color:##1c434a;color:##b6dce3}.cf_dump .var.component>.row>.rowheader{background-color:##b6dce3;border-color:##1c434a;color:##1c434a}.cf_dump .var.component>.row>.rowcell{border-color:##1c434a}.cf_dump .var.exception>.colheader{background-color:##000;border-color:##000;color:##ffff80}
 				.cf_dump .var.exception>.row>.rowheader{background-color:##ffff80;border-color:##000;color:##000}.cf_dump .var.exception>.row>.rowcell{border-color:##000}.cf_dump .var.null>.colheader{background-color:##000;border-color:##000;color:##fff}.cf_dump .var.null>.row>.rowcell{border-color:##000}.cf_dump .var.numeric>.colheader{background-color:##2196f3;border-color:##2196f3;color:##fff}.cf_dump .var.numeric>.row>.rowcell{border-color:##2196f3}.cf_dump .var.object>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.object>.row>.rowheader{background-color:##ffdbdb;border-color:##f44;color:##f44}.cf_dump .var.object>.row>.rowcell{border-color:##f44}.cf_dump .var.query>.colheader{background-color:##a6a;border-color:##a6a;color:##fff}
 				.cf_dump .var.query>.colfooter{border-color:##a6a}.cf_dump .var.query>.row>.rowheader{background-color:##fdf;border-color:##a6a;color:##a6a}.cf_dump .var.query>.row>.rowcell{border-color:##a6a}.cf_dump .var.simple>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.simple>.row>.rowcell{border-color:##f44}.cf_dump .var.string>.colheader{background-color:##ff8000;border-color:##ff8000;color:##fff}.cf_dump .var.string>.row>.rowcell{border-color:##ff8000}.cf_dump .var.struct>.colheader{background-color:##44c;border-color:##44c;color:##fff}.cf_dump .var.struct>.row>.rowheader{background-color:##cdf;border-color:##44c;color:##44c}.cf_dump .var.struct>.row>.rowcell{border-color:##44c}
@@ -269,51 +281,17 @@
 						<!--- whitespace warning --->
 						<cfif (
 							(not ATTRIBUTES.pre) and
-							ATTRIBUTES.wsWarning
+							VARIABLES.wsInspectVal
 						)>
 
-							<cfset LOCAL.firstCP = ARGUMENTS.var.codePointAt(0)>
-							<cfset LOCAL.lastCP  = ARGUMENTS.var.codePointAt(LOCAL.len -1)>
-							<cfset LOCAL.wsFirst = (arrayFind(VARIABLES.wsCodepoints, LOCAL.firstCP) gt 0)>
-							<cfset LOCAL.wsLast  = (arrayFind(VARIABLES.wsCodepoints, LOCAL.lastCP)  gt 0)>
+							<cfset LOCAL.val = replaceWS(ARGUMENTS.var)>
 
-							<cfif LOCAL.wsFirst or LOCAL.wsLast>
+							<cfif not isNull(LOCAL.val)>
 
-								<cfset LOCAL.title = "This string contains leading or trailing whitespaces, usually unintended. All whitespaces have been replaced with a dot.">
-
+								<cfset LOCAL.title     = "This string contains leading or trailing whitespaces, usually unintended. All whitespaces have been replaced with a dot.">
 								<cfset LOCAL.cssClass &= " whitespace">
 
-								<!--- BEGIN: rebuild string with replaced whitespaces --->
-
-									<cfset LOCAL.cpArray = []>
-									<cfset LOCAL.offset  = 0>
-
-									<cfloop condition="true">
-
-										<cfif LOCAL.offset gte LOCAL.len>
-											<cfbreak>
-										</cfif>
-
-										<cfset LOCAL.cp   = ARGUMENTS.var.codePointAt(LOCAL.offset)>
-										<cfset LOCAL.isWS = (arrayFind(VARIABLES.wsCodepoints, LOCAL.cp) gt 0)>
-
-										<cfif LOCAL.isWS>
-											<cfset LOCAL.cpArray.add(46)> <!--- 46 = . --->
-										<cfelse>
-											<cfset LOCAL.cpArray.add(LOCAL.cp)>
-										</cfif>
-
-										<cfset LOCAL.offset += VARIABLES.Character.charCount(LOCAL.cp)>
-
-									</cfloop>
-
-									<cfset ARGUMENTS.var = createObject("java", "java.lang.String").init(
-										javaCast("int[]", LOCAL.cpArray),
-										0,
-										arrayLen(LOCAL.cpArray)
-									)>
-
-								<!--- END: rebuild string with replaced whitespaces --->
+								<cfset ARGUMENTS.var = LOCAL.val>
 
 							</cfif>
 
@@ -356,20 +334,14 @@
 				</div>
 				<div class="row">
 					<div class="rowcell">
+						<cfif ATTRIBUTES.pre><pre></cfif>
 						<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
-						<cfif ATTRIBUTES.pre>
-							<cfif VARIABLES.isLucee>
-								<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
-							<cfelse>
-								<pre>#htmlEditFormat(ARGUMENTS.var)#</pre>
-							</cfif>
+						<cfif VARIABLES.isLucee>
+							#encodeForHtml(ARGUMENTS.var)#
 						<cfelse>
-							<cfif VARIABLES.isLucee>
-								#encodeForHtml(ARGUMENTS.var)#
-							<cfelse>
-								#htmlEditFormat(ARGUMENTS.var)#
-							</cfif>
+							#htmlEditFormat(ARGUMENTS.var)#
 						</cfif>
+						<cfif ATTRIBUTES.pre></pre></cfif>
 					</div>
 				</div>
 			</div>
@@ -1301,43 +1273,61 @@
 
 						<cfloop collection="#ARGUMENTS.var#" item="LOCAL.key">
 
-							<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
+							<cfset LOCAL.printedKey = LOCAL.key>
+							<cfset LOCAL.title      = "">
+							<cfset LOCAL.cssClass   = "">
 
-								<div class="row">
-									<div class="rowheader">
-										#encodeForHtml(LOCAL.key)#
-									</div>
+							<!--- whitespace warning --->
+							<cfif VARIABLES.wsInspectKey>
+
+								<cfset LOCAL.val = replaceWS(LOCAL.key)>
+
+								<cfif not isNull(LOCAL.val)>
+
+									<cfset LOCAL.title    = "This key contains leading or trailing whitespaces, usually unintended. All whitespaces have been replaced with a dot.">
+									<cfset LOCAL.cssClass = "whitespace">
+
+									<cfset LOCAL.printedKey = LOCAL.val>
+
+								</cfif>
+
+							</cfif>
+
+							<div class="row">
+
+								<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="rowheader #LOCAL.cssClass#">
+									<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
+									<cfif VARIABLES.isLucee>
+										#encodeForHtml(LOCAL.printedKey)#
+									<cfelse>
+										#htmlEditFormat(LOCAL.printedKey)#
+									</cfif>
+								</div>
+
+								<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
+
 									<div class="rowcell lowkey">
 										<div class="cellcontent">
 											[blacklisted]
 										</div>
 									</div>
-								</div>
 
-							<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
+								<cfelseif structKeyExists(ARGUMENTS.var, LOCAL.key)>
 
-								<div class="row">
-									<div class="rowheader">
-										#encodeForHtml(LOCAL.key)#
-									</div>
 									<div class="rowcell">
 										#renderDump(ARGUMENTS.var[LOCAL.key], ARGUMENTS.depth)#
 									</div>
-								</div>
 
-							<!--- null value --->
-							<cfelse>
+								<!--- null value --->
+								<cfelse>
 
-								<div class="row">
-									<div class="rowheader">
-										#encodeForHtml(LOCAL.key)#
-									</div>
 									<div class="rowcell">
 										#renderDump()#
 									</div>
-								</div>
 
-							</cfif>
+								</cfif>
+
+							</div>
 
 						</cfloop>
 
@@ -1475,6 +1465,57 @@
 
 	<!--- multidimensional array is treated as one dimensional array --->
 	<cfreturn (ARGUMENTS.className & "[]")>
+</cffunction>
+
+<cffunction name="replaceWS" accessor="private" output="false" returnType="any">
+
+	<cfargument name="value" type="string" required="true">
+
+	<cfset LOCAL.Character    = createObject("java", "java.lang.Character")>
+	<cfset LOCAL.wsCodepoints = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 133, 160, 173, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8204, 8205, 8206, 8207, 8288, 8232, 8233, 8239, 8287, 9248, 9250, 9251, 10240, 12288, 65279, 65296 ]>
+
+	<cfset LOCAL.len     = len(ARGUMENTS.value)>
+	<cfset LOCAL.firstCP = ARGUMENTS.value.codePointAt(0)>
+	<cfset LOCAL.lastCP  = ARGUMENTS.value.codePointAt(LOCAL.len -1)>
+	<cfset LOCAL.wsFirst = (arrayFind(LOCAL.wsCodepoints, LOCAL.firstCP) gt 0)>
+	<cfset LOCAL.wsLast  = (arrayFind(LOCAL.wsCodepoints, LOCAL.lastCP)  gt 0)>
+
+	<cfif (
+		(not LOCAL.wsFirst) and
+		(not LOCAL.wsLast)
+	)>
+		<cfreturn>
+	</cfif>
+
+	<cfset LOCAL.cpArray = []>
+	<cfset LOCAL.offset  = 0>
+
+	<cfloop condition="true">
+
+		<cfif LOCAL.offset gte LOCAL.len>
+			<cfbreak>
+		</cfif>
+
+		<cfset LOCAL.cp   = ARGUMENTS.value.codePointAt(LOCAL.offset)>
+		<cfset LOCAL.isWS = (arrayFind(LOCAL.wsCodepoints, LOCAL.cp) gt 0)>
+
+		<cfif LOCAL.isWS>
+			<cfset LOCAL.cpArray.add(46)> <!--- 46 = . --->
+		<cfelse>
+			<cfset LOCAL.cpArray.add(LOCAL.cp)>
+		</cfif>
+
+		<cfset LOCAL.offset += LOCAL.Character.charCount(LOCAL.cp)>
+
+	</cfloop>
+
+	<cfset ARGUMENTS.value = createObject("java", "java.lang.String").init(
+		javaCast("int[]", LOCAL.cpArray),
+		0,
+		arrayLen(LOCAL.cpArray)
+	)>
+
+	<cfreturn ARGUMENTS.value>
 </cffunction>
 
 <cffunction name="trimOutput" access="private" output="false" returnType="string">

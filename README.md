@@ -263,6 +263,15 @@ Preserve whitespaces in strings when displaying the dump. Default: `false`
 
 Show warning if strings contain leading or trailing whitespaces. Default: `true`
 
+| param   | whitespaces                 |
+| ------- | --------------------------- |
+| `false` | no detection                |
+| `key`   | detect in keys\* only       |
+| `value` | detect in values only       |
+| `true`  | detect in keys\* and values |
+
+\* applies to struct keys only
+
 ### blacklist
 
 Keys to blacklist. Blacklisted keys will not be dumped. Default: `[]`
