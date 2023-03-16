@@ -182,7 +182,7 @@
 	</cfoutput>
 </cfsavecontent>
 
-<cfoutput>#trimOutput(VARIABLES.output)#</cfoutput>
+<cfoutput>#trimOutput(VARIABLES.output, attributes.pre)#</cfoutput>
 
 <cfif ATTRIBUTES.abort>
 	<cfsetting enableCFoutputOnly="false"><cfabort>
@@ -1480,6 +1480,7 @@
 <cffunction name="trimOutput" access="private" output="false" returnType="string">
 
 	<cfargument name="content" type="string" required="true">
+	<cfargument name="pre" type="boolean" required="false" default="true">
 
 	<cfset LOCAL.result = trim(ARGUMENTS.content)>
 
@@ -1487,7 +1488,9 @@
 	<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
 
 	<!--- reduce line feeds --->
-	<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+	<cfif !arguments.pre>
+		<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+	</cfif>
 
 	<!--- compact divs --->
 	<cfset LOCAL.result = reReplace(LOCAL.result, "</div>\n(?!=</div>)", "</div>", "ALL")>
