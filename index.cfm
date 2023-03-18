@@ -253,7 +253,11 @@
 
 	<h1>pre</h1>
 
-		<cfset s = "#chr(9)#tab#chr(13)##chr(10)#newline#chr(10)##chr(10)#  2 spaces#chr(10)##chr(10)#">
+		<cfset s = arrayToList([
+			"spaces: 2  3   END",
+			"tabs: 1#chr(9)#2#chr(9)##chr(9)#3#chr(9)##chr(9)##chr(9)#END",
+			"newline: 1#chr(13)##chr(10)#2#chr(13)##chr(10)##chr(13)##chr(10)#3#chr(13)##chr(10)##chr(13)##chr(10)##chr(13)##chr(10)#END"
+		], chr(10))>
 
 		<cf_dump pre var="#s#">
 

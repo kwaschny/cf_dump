@@ -2,7 +2,7 @@
 
 .cf_dump {
 	background-color: #FFFFFF;
-	border-spacing: 0px;
+	border-spacing: 0;
 	color: #000000;
 	font-family: 'Segoe UI', sans-serif;
 	font-size: 14px;
@@ -13,6 +13,10 @@
 	.cf_dump div {
 		box-sizing: border-box;
 		font-size: inherit;
+	}
+
+	.cf_dump pre {
+		margin: 0;
 	}
 
 	.cf_dump .lowkey {

@@ -158,7 +158,7 @@
 			<cfset REQUEST["__cf_dump_head"] = true>
 
 			<style>
-				.cf_dump{background-color:##fff;border-spacing:0;color:##000;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;width:100%}.cf_dump .var .rowheader.whitespace::before,.cf_dump .var.whitespace .colheader::before{content:'⚠️'}.cf_dump .var .rowheader.whitespace,.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
+				.cf_dump{background-color:##fff;border-spacing:0;color:##000;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump pre{margin:0}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;width:100%}.cf_dump .var .rowheader.whitespace::before,.cf_dump .var.whitespace .colheader::before{content:'⚠️'}.cf_dump .var .rowheader.whitespace,.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
 				.cf_dump .var.array>.row>.rowcell{border-color:##090}.cf_dump .var.boolean>.colheader{background-color:##673ab7;border-color:##673ab7;color:##fff}.cf_dump .var.boolean>.row>.rowcell{border-color:##673ab7}.cf_dump .var.byte>.colheader{background-color:##fc4;border-color:##fc4;color:##000}.cf_dump .var.byte>.row>.rowcell{border-color:##fc4}.cf_dump .var.component>.colheader{background-color:##1c434a;border-color:##1c434a;color:##b6dce3}.cf_dump .var.component>.row>.rowheader{background-color:##b6dce3;border-color:##1c434a;color:##1c434a}.cf_dump .var.component>.row>.rowcell{border-color:##1c434a}.cf_dump .var.exception>.colheader{background-color:##000;border-color:##000;color:##ffff80}
 				.cf_dump .var.exception>.row>.rowheader{background-color:##ffff80;border-color:##000;color:##000}.cf_dump .var.exception>.row>.rowcell{border-color:##000}.cf_dump .var.null>.colheader{background-color:##000;border-color:##000;color:##fff}.cf_dump .var.null>.row>.rowcell{border-color:##000}.cf_dump .var.numeric>.colheader{background-color:##2196f3;border-color:##2196f3;color:##fff}.cf_dump .var.numeric>.row>.rowcell{border-color:##2196f3}.cf_dump .var.object>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.object>.row>.rowheader{background-color:##ffdbdb;border-color:##f44;color:##f44}.cf_dump .var.object>.row>.rowcell{border-color:##f44}.cf_dump .var.query>.colheader{background-color:##a6a;border-color:##a6a;color:##fff}
 				.cf_dump .var.query>.colfooter{border-color:##a6a}.cf_dump .var.query>.row>.rowheader{background-color:##fdf;border-color:##a6a;color:##a6a}.cf_dump .var.query>.row>.rowcell{border-color:##a6a}.cf_dump .var.simple>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.simple>.row>.rowcell{border-color:##f44}.cf_dump .var.string>.colheader{background-color:##ff8000;border-color:##ff8000;color:##fff}.cf_dump .var.string>.row>.rowcell{border-color:##ff8000}.cf_dump .var.struct>.colheader{background-color:##44c;border-color:##44c;color:##fff}.cf_dump .var.struct>.row>.rowheader{background-color:##cdf;border-color:##44c;color:##44c}.cf_dump .var.struct>.row>.rowcell{border-color:##44c}
@@ -194,7 +194,7 @@
 	</cfoutput>
 </cfsavecontent>
 
-<cfoutput>#trimOutput(VARIABLES.output)#</cfoutput>
+<cfoutput>#trimOutput(VARIABLES.output, ATTRIBUTES.pre)#</cfoutput>
 
 <cfif ATTRIBUTES.abort>
 	<cfsetting enableCFoutputOnly="false"><cfabort>
@@ -334,14 +334,15 @@
 				</div>
 				<div class="row">
 					<div class="rowcell">
-						<cfif ATTRIBUTES.pre><pre></cfif>
-						<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
-						<cfif VARIABLES.isLucee>
-							#encodeForHtml(ARGUMENTS.var)#
+						<cfif ATTRIBUTES.pre>
+							<pre><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
 						<cfelse>
-							#htmlEditFormat(ARGUMENTS.var)#
+							<cfif VARIABLES.isLucee>
+								#encodeForHtml(ARGUMENTS.var)#
+							<cfelse>
+								#htmlEditFormat(ARGUMENTS.var)#
+							</cfif>
 						</cfif>
-						<cfif ATTRIBUTES.pre></pre></cfif>
 					</div>
 				</div>
 			</div>
@@ -1520,15 +1521,20 @@
 
 <cffunction name="trimOutput" access="private" output="false" returnType="string">
 
-	<cfargument name="content" type="string" required="true">
+	<cfargument name="content" type="string"  required="true">
+	<cfargument name="pre"     type="boolean" required="true">
 
 	<cfset LOCAL.result = trim(ARGUMENTS.content)>
 
-	<!--- remove all tabs --->
-	<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+	<cfif not ARGUMENTS.pre>
 
-	<!--- reduce line feeds --->
-	<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+		<!--- remove all tabs --->
+		<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+
+		<!--- reduce line feeds --->
+		<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+
+	</cfif>
 
 	<!--- compact divs --->
 	<cfset LOCAL.result = reReplace(LOCAL.result, "</div>\n(?!=</div>)", "</div>", "ALL")>

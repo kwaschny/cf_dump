@@ -143,7 +143,7 @@
 
 			.cf_dump {
 				background-color: ##FFFFFF;
-				border-spacing: 0px;
+				border-spacing: 0;
 				color: ##000000;
 				font-family: 'Segoe UI', sans-serif;
 				font-size: 14px;
@@ -154,6 +154,10 @@
 				.cf_dump div {
 					box-sizing: border-box;
 					font-size: inherit;
+				}
+
+				.cf_dump pre {
+					margin: 0;
 				}
 
 				.cf_dump .lowkey {
@@ -338,7 +342,7 @@
 	</cfoutput>
 </cfsavecontent>
 
-<cfoutput>#trimOutput(VARIABLES.output)#</cfoutput>
+<cfoutput>#trimOutput(VARIABLES.output, ATTRIBUTES.pre)#</cfoutput>
 
 <cfif ATTRIBUTES.abort>
 	<cfsetting enableCFoutputOnly="false"><cfabort>
@@ -494,14 +498,15 @@
 				</div>
 				<div class="row">
 					<div class="rowcell" style="border-color: #LOCAL.cssDeepColor#;">
-						<cfif ATTRIBUTES.pre><pre></cfif>
-						<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
-						<cfif VARIABLES.isLucee>
-							#encodeForHtml(ARGUMENTS.var)#
+						<cfif ATTRIBUTES.pre>
+							<pre><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
 						<cfelse>
-							#htmlEditFormat(ARGUMENTS.var)#
+							<cfif VARIABLES.isLucee>
+								#encodeForHtml(ARGUMENTS.var)#
+							<cfelse>
+								#htmlEditFormat(ARGUMENTS.var)#
+							</cfif>
 						</cfif>
-						<cfif ATTRIBUTES.pre></pre></cfif>
 					</div>
 				</div>
 			</div>
@@ -1710,15 +1715,20 @@
 
 <cffunction name="trimOutput" access="private" output="false" returnType="string">
 
-	<cfargument name="content" type="string" required="true">
+	<cfargument name="content" type="string"  required="true">
+	<cfargument name="pre"     type="boolean" required="true">
 
 	<cfset LOCAL.result = trim(ARGUMENTS.content)>
 
-	<!--- remove all tabs --->
-	<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+	<cfif not ARGUMENTS.pre>
 
-	<!--- reduce line feeds --->
-	<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+		<!--- remove all tabs --->
+		<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+
+		<!--- reduce line feeds --->
+		<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+
+	</cfif>
 
 	<!--- compact divs --->
 	<cfset LOCAL.result = reReplace(LOCAL.result, "</div>\n(?!=</div>)", "</div>", "ALL")>
