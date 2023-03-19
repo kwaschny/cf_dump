@@ -3,7 +3,9 @@
 .cf_dump {
 	background-color: #FFFFFF;
 	border-spacing: 0;
+	box-sizing: border-box;
 	color: #000000;
+	display: table;
 	font-family: 'Segoe UI', sans-serif;
 	font-size: 14px;
 	margin-bottom: 8px;
@@ -237,6 +239,7 @@
 
 	.cf_dump .colfooter {
 		border: 1px solid;
+		border-top: 0;
 		display: table-caption;
 		caption-side: bottom;
 		padding: 2px;
@@ -255,8 +258,8 @@
 
 	.cf_dump .rowheader {
 		border: 1px solid;
-		border-right: none;
-		border-top: none;
+		border-right: 0;
+		border-top: 0;
 		cursor: pointer;
 		display: table-cell;
 		padding: 2px 4px;
@@ -277,7 +280,7 @@
 
 	.cf_dump .rowcell {
 		border: 1px solid;
-		border-top: none;
+		border-top: 0;
 		display: table-cell;
 		padding: 2px;
 		vertical-align: top;
@@ -303,7 +306,7 @@
 
 	.cf_dump .object .col.colheader a {
 		color: inherit;
-		text-decoration: underline;
+		text-decoration: none;
 	}
 	.cf_dump .object .row .rowcell {
 		font-family: Consolas, monospace;
