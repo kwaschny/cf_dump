@@ -1532,15 +1532,15 @@
 	<cfargument name="content" type="string"  required="true">
 	<cfargument name="pre"     type="boolean" required="true">
 
-	<cfset LOCAL.result = trim(ARGUMENTS.content)>
+	<cfset LOCAL.result = javacast("string", trim(ARGUMENTS.content))>
 
 	<cfif not ARGUMENTS.pre>
 
 		<!--- remove all tabs --->
-		<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+		<cfset LOCAL.result = LOCAL.result.replaceAll(chr(9), "")>
 
 		<!--- reduce line feeds --->
-		<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+		<cfset LOCAL.result = LOCAL.result.replaceAll("\n{2,}", chr(10))>
 
 	</cfif>
 
