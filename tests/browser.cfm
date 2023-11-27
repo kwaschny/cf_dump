@@ -185,6 +185,9 @@
 
 	<h1>wsWarning</h1>
 
+		<!--- blank keys --->
+		<cf_dump var="#{ "": { " ": " " } }#">
+
 		<!--- ASCII excerpt --->
 		<cf_dump var="#chr(9)#x">           <!--- horizontal tab --->
 		<cf_dump var="x#chr(13)##chr(10)#"> <!--- carriage return --->

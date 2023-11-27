@@ -1472,10 +1472,14 @@
 
 	<cfargument name="value" type="string" required="true">
 
+	<cfset LOCAL.len = len(ARGUMENTS.value)>
+	<cfif not LOCAL.len>
+		<cfreturn>
+	</cfif>
+
 	<cfset LOCAL.Character    = createObject("java", "java.lang.Character")>
 	<cfset LOCAL.wsCodepoints = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 133, 160, 173, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8204, 8205, 8206, 8207, 8288, 8232, 8233, 8239, 8287, 9248, 9250, 9251, 10240, 12288, 65279, 65296 ]>
 
-	<cfset LOCAL.len     = len(ARGUMENTS.value)>
 	<cfset LOCAL.firstCP = ARGUMENTS.value.codePointAt(0)>
 	<cfset LOCAL.lastCP  = ARGUMENTS.value.codePointAt(LOCAL.len -1)>
 	<cfset LOCAL.wsFirst = (arrayFind(LOCAL.wsCodepoints, LOCAL.firstCP) gt 0)>
