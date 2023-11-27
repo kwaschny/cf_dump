@@ -1541,15 +1541,15 @@
 	<cfif not ARGUMENTS.pre>
 
 		<!--- remove all tabs --->
-		<cfset LOCAL.result = createObject("java", "org.apache.commons.lang.StringUtils").replace(LOCAL.result, chr(9), "")>
+		<cfset LOCAL.result = LOCAL.result.replaceAll(chr(9), "")>
 
 		<!--- reduce line feeds --->
-		<cfset LOCAL.result = reReplace(LOCAL.result, "\n{2,}", chr(10), "ALL")>
+		<cfset LOCAL.result = LOCAL.result.replaceAll("\n{2,}", chr(10))>
 
 	</cfif>
 
 	<!--- compact divs --->
-	<cfset LOCAL.result = reReplace(LOCAL.result, "</div>\n(?!=</div>)", "</div>", "ALL")>
+	<cfset LOCAL.result = LOCAL.result.replaceAll("</div>\n(?!=</div>)", "</div>")>
 
 	<cfreturn LOCAL.result>
 </cffunction>
