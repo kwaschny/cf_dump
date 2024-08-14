@@ -309,8 +309,8 @@ You can override defaults at any point, but I recommend specifying them in the A
 
 ## `cf_dumpmail`
 
-When you want to send a dump via HTML mail, you might encounter a few style related issues that depend on the e-mail client (CSS support). For this reason `<cf_dumpmail>` exists. Here are the differences:
+When you want to send a dump via HTML mail, you might encounter style related issues that depend on the e-mail client (CSS support). For this reason `<cf_dumpmail>` exists. Here are the key differences:
 
-- colors are inlined (for better compatibility)
-- `<style>` tag is always present (attribute `embed` always true/doesn't exist)
-- `<script>` tag is not present (as e-mail clients do not execute JavaScript anyway)
+- all styles are inlined (for better compatibility)
+- no visibility toggle (no expand/collapse)
+- attribute `embed` has no effect
