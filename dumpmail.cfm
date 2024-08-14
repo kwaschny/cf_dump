@@ -57,6 +57,26 @@
 		<cfset ATTRIBUTES.byteEncoding = []>
 	</cfif>
 
+	<!--- byteMax --->
+	<cfif (
+		(not structKeyExists(ATTRIBUTES, "byteMax")) and
+		structKeyExists(REQUEST, "__cf_dump_byteMax") and
+		isNumeric(REQUEST["__cf_dump_byteMax"])
+	)>
+		<cfset ATTRIBUTES.byteMax = REQUEST["__cf_dump_byteMax"]>
+	</cfif>
+	<cfparam name="ATTRIBUTES.byteMax" type="numeric" default="1024">
+
+	<!--- embed --->
+	<cfif (
+		(not structKeyExists(ATTRIBUTES, "embed")) and
+		structKeyExists(REQUEST, "__cf_dump_embed") and
+		isBoolean(REQUEST["__cf_dump_embed"])
+	)>
+		<cfset ATTRIBUTES.embed = REQUEST["__cf_dump_embed"]>
+	</cfif>
+	<cfparam name="ATTRIBUTES.embed" type="boolean" default="false">
+
 	<!--- label --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "label")) and
@@ -363,72 +383,87 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
+				<cfset isByteArray = (LOCAL.subType eq "[B")>
+				<cfset showValues  = ((not isByteArray) or (LOCAL.len lte ATTRIBUTES.byteMax))>
+
 				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
 
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">array [#LOCAL.len#]</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
 
-					<!--- Byte[] --->
-					<cfif LOCAL.subType eq "[B">
+					<cfif showValues>
 
-						<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
+						<!--- Byte[] --->
+						<cfif isByteArray>
 
-							<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-								<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-									#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
-								</div>
-								<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; color: ##A0A0A0; display: table-cell; padding: 2px; vertical-align: top;">
-									<div style="box-sizing: border-box;">
-										<cftry>
-											#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
-											<cfcatch>
-												[encoding failed]
-											</cfcatch>
-										</cftry>
+							<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
+
+								<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+									<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+										#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
+									</div>
+									<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; color: ##A0A0A0; display: table-cell; padding: 2px; vertical-align: top;">
+										<div style="box-sizing: border-box;">
+											<cftry>
+												#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
+												<cfcatch>
+													[encoding failed]
+												</cfcatch>
+											</cftry>
+										</div>
 									</div>
 								</div>
-							</div>
 
-						</cfloop>
+							</cfloop>
 
-					</cfif>
+						</cfif>
 
-					<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
+						<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
 
-						<!--- top (maximum elements) --->
-						<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
+							<!--- top (maximum elements) --->
+							<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
+
+								<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+									<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+										#LOCAL.i#
+									</div>
+									<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; color: ##A0A0A0; display: table-cell; padding: 2px; vertical-align: top;">
+										<div style="box-sizing: border-box;">
+											[top reached]
+										</div>
+									</div>
+								</div>
+
+								<cfbreak>
+
+							</cfif>
 
 							<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
 								<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
 									#LOCAL.i#
 								</div>
-								<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; color: ##A0A0A0; display: table-cell; padding: 2px; vertical-align: top;">
-									<div style="box-sizing: border-box;">
-										[top reached]
-									</div>
+								<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; border-color: #LOCAL.cssDeepColor#; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+									<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
+										#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
+									<cfelse>
+										#renderDump()#
+									</cfif>
 								</div>
 							</div>
 
-							<cfbreak>
+							<cfset LOCAL.i++>
+						</cfloop>
 
-						</cfif>
+					<cfelse>
 
 						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-								#LOCAL.i#
-							</div>
-							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; border-color: #LOCAL.cssDeepColor#; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-								<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
-									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
-								<cfelse>
-									#renderDump()#
-								</cfif>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; color: ##A0A0A0; display: table-cell; padding: 2px; vertical-align: top;">
+								[more than #ATTRIBUTES.byteMax# Bytes]
 							</div>
 						</div>
 
-						<cfset LOCAL.i++>
-					</cfloop>
+					</cfif>
 
 				</div>
 

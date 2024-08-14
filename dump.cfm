@@ -57,6 +57,16 @@
 		<cfset ATTRIBUTES.byteEncoding = []>
 	</cfif>
 
+	<!--- byteMax --->
+	<cfif (
+		(not structKeyExists(ATTRIBUTES, "byteMax")) and
+		structKeyExists(REQUEST, "__cf_dump_byteMax") and
+		isNumeric(REQUEST["__cf_dump_byteMax"])
+	)>
+		<cfset ATTRIBUTES.byteMax = REQUEST["__cf_dump_byteMax"]>
+	</cfif>
+	<cfparam name="ATTRIBUTES.byteMax" type="numeric" default="1024">
+
 	<!--- embed --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "embed")) and
@@ -386,72 +396,87 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
+				<cfset isByteArray = (LOCAL.subType eq "[B")>
+				<cfset showValues  = ((not isByteArray) or (LOCAL.len lte ATTRIBUTES.byteMax))>
+
 				<div class="var array">
 
 					<div class="col colheader">
 						<span class="type">array [#LOCAL.len#]</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span> <span class="ref">@#encodeForHtml(LOCAL.identity)#</span> <a title="Toggle empty elements." class="toggle">🗜</a>
 					</div>
 
-					<!--- Byte[] --->
-					<cfif LOCAL.subType eq "[B">
+					<cfif showValues>
 
-						<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
+						<!--- Byte[] --->
+						<cfif isByteArray>
 
-							<div class="row">
-								<div class="rowheader" data-cf_dump_collapsed>
-									#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
-								</div>
-								<div class="rowcell lowkey hidden">
-									<div class="cellcontent">
-										<cftry>
-											#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
-											<cfcatch>
-												[encoding failed]
-											</cfcatch>
-										</cftry>
+							<cfloop array="#ATTRIBUTES.byteEncoding#" index="LOCAL.encoding">
+
+								<div class="row">
+									<div class="rowheader" data-cf_dump_collapsed>
+										#encodeForHtml( replace(uCase(LOCAL.encoding), "-", "‑", "ALL") )# <!--- force non-breaking hyphen --->
+									</div>
+									<div class="rowcell lowkey hidden">
+										<div class="cellcontent">
+											<cftry>
+												#charsetEncode(ARGUMENTS.var, LOCAL.encoding)#
+												<cfcatch>
+													[encoding failed]
+												</cfcatch>
+											</cftry>
+										</div>
 									</div>
 								</div>
-							</div>
 
-						</cfloop>
+							</cfloop>
 
-					</cfif>
+						</cfif>
 
-					<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
+						<cfloop from="1" to="#LOCAL.len#" index="LOCAL.i">
 
-						<!--- top (maximum elements) --->
-						<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
+							<!--- top (maximum elements) --->
+							<cfif (ATTRIBUTES.top gte 0) and (LOCAL.i gt ATTRIBUTES.top)>
+
+								<div class="row">
+									<div class="rowheader">
+										#LOCAL.i#
+									</div>
+									<div class="rowcell lowkey">
+										<div class="cellcontent">
+											[top reached]
+										</div>
+									</div>
+								</div>
+
+								<cfbreak>
+
+							</cfif>
 
 							<div class="row">
 								<div class="rowheader">
 									#LOCAL.i#
 								</div>
-								<div class="rowcell lowkey">
-									<div class="cellcontent">
-										[top reached]
-									</div>
+								<div class="rowcell">
+									<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
+										#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
+									<cfelse>
+										#renderDump()#
+									</cfif>
 								</div>
 							</div>
 
-							<cfbreak>
+							<cfset LOCAL.i++>
+						</cfloop>
 
-						</cfif>
+					<cfelse>
 
 						<div class="row">
-							<div class="rowheader">
-								#LOCAL.i#
-							</div>
-							<div class="rowcell">
-								<cfif arrayIsDefined(ARGUMENTS.var, LOCAL.i)>
-									#renderDump(ARGUMENTS.var[LOCAL.i], ARGUMENTS.depth)#
-								<cfelse>
-									#renderDump()#
-								</cfif>
+							<div class="rowcell lowkey">
+								[more than #ATTRIBUTES.byteMax# Bytes]
 							</div>
 						</div>
 
-						<cfset LOCAL.i++>
-					</cfloop>
+					</cfif>
 
 				</div>
 

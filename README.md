@@ -280,6 +280,10 @@ Keys to blacklist. Blacklisted keys will not be dumped. Default: `[]`
 
 Encoding(s) to use when dumping byte arrays. Default: `[ "UTF-8" ]`
 
+### byteMax
+
+Maximum number of bytes to display as individual row when dumping byte arrays. Default: `1024`
+
 ### reset
 
 Discard all output before `<cf_dump>` is executed. This is handy if you want to dump in the middle of a view without rendering the view up to this point. Default: `false`
