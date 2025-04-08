@@ -345,13 +345,9 @@
 				<div class="row">
 					<div class="rowcell">
 						<cfif ATTRIBUTES.pre>
-							<pre><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
+							<pre>#encodeForHtml(ARGUMENTS.var)#</pre>
 						<cfelse>
-							<cfif VARIABLES.isLucee>
-								#encodeForHtml(ARGUMENTS.var)#
-							<cfelse>
-								#htmlEditFormat(ARGUMENTS.var)#
-							</cfif>
+							#encodeForHtml(ARGUMENTS.var)#
 						</cfif>
 					</div>
 				</div>
@@ -1323,11 +1319,7 @@
 
 								<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="rowheader #LOCAL.cssClass#">
 									<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
-									<cfif VARIABLES.isLucee>
-										#encodeForHtml(LOCAL.printedKey)#
-									<cfelse>
-										#htmlEditFormat(LOCAL.printedKey)#
-									</cfif>
+									#encodeForHtml(LOCAL.printedKey)#
 								</div>
 
 								<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
