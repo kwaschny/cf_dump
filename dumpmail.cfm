@@ -328,13 +328,9 @@
 				<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
 					<div style="border: 1px solid; border-top: 0; border-color: #LOCAL.cssDeepColor#; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top; #( (LOCAL.rawType eq "java.lang.String") ? "word-break: break-all;" : "" )# #( LOCAL.showAlert ? "color: ##F00000; font-family: Consolas, monospace; letter-spacing: 1px;" : "" )#">
 						<cfif ATTRIBUTES.pre>
-							<pre style="margin: 0"><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
+							<pre style="margin: 0">#encodeForHtml(ARGUMENTS.var)#</pre>
 						<cfelse>
-							<cfif VARIABLES.isLucee>
-								#encodeForHtml(ARGUMENTS.var)#
-							<cfelse>
-								#htmlEditFormat(ARGUMENTS.var)#
-							</cfif>
+							#encodeForHtml(ARGUMENTS.var)#
 						</cfif>
 					</div>
 				</div>
@@ -1333,11 +1329,7 @@
 
 								<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; white-space: nowrap; width: 1%; #( LOCAL.showAlert ? "font-family: Consolas, monospace; letter-spacing: 1px;" : "" )#">
 									<cfif LOCAL.showAlert>⚠️</cfif>
-									<cfif VARIABLES.isLucee>
-										#encodeForHtml(LOCAL.printedKey)#
-									<cfelse>
-										#htmlEditFormat(LOCAL.printedKey)#
-									</cfif>
+									#encodeForHtml(LOCAL.printedKey)#
 								</div>
 
 								<cfif arrayFindNoCase(ATTRIBUTES.blacklist, LOCAL.key)>
