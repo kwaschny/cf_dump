@@ -7,7 +7,14 @@
 	<cfsetting enableCFoutputOnly="false"><cfexit>
 </cfif>
 
+<!--- ACF & Lucee require a different approach to retrieve the proper order and case of columns in a query --->
 <cfset VARIABLES.isLucee = structKeyExists(SERVER, "lucee")>
+
+<!---
+	ACF ≤ 11 uses legacy ESAPI encoder that cannot handle all codepoints properly,
+	so we prefer htmlEditFormat() over encodeForHtml() for these versions
+--->
+<cfset VARIABLES.useLegacyEncoder = (listFirst(SERVER.ColdFusion.ProductVersion) lte 11)>
 
 <!--- BEGIN: attributes --->
 
@@ -328,12 +335,12 @@
 				<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
 					<div style="border: 1px solid; border-top: 0; border-color: #LOCAL.cssDeepColor#; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top; #( (LOCAL.rawType eq "java.lang.String") ? "word-break: break-all;" : "" )# #( LOCAL.showAlert ? "color: ##F00000; font-family: Consolas, monospace; letter-spacing: 1px;" : "" )#">
 						<cfif ATTRIBUTES.pre>
-							<pre style="margin: 0"><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
+							<pre style="margin: 0"><cfif VARIABLES.useLegacyEncoder>#htmlEditFormat(ARGUMENTS.var)#<cfelse>#encodeForHtml(ARGUMENTS.var)#</cfif></pre>
 						<cfelse>
-							<cfif VARIABLES.isLucee>
-								#encodeForHtml(ARGUMENTS.var)#
-							<cfelse>
+							<cfif VARIABLES.useLegacyEncoder>
 								#htmlEditFormat(ARGUMENTS.var)#
+							<cfelse>
+								#encodeForHtml(ARGUMENTS.var)#
 							</cfif>
 						</cfif>
 					</div>
@@ -1333,10 +1340,10 @@
 
 								<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; white-space: nowrap; width: 1%; #( LOCAL.showAlert ? "font-family: Consolas, monospace; letter-spacing: 1px;" : "" )#">
 									<cfif LOCAL.showAlert>⚠️</cfif>
-									<cfif VARIABLES.isLucee>
-										#encodeForHtml(LOCAL.printedKey)#
-									<cfelse>
+									<cfif VARIABLES.useLegacyEncoder>
 										#htmlEditFormat(LOCAL.printedKey)#
+									<cfelse>
+										#encodeForHtml(LOCAL.printedKey)#
 									</cfif>
 								</div>
 

@@ -7,7 +7,14 @@
 	<cfsetting enableCFoutputOnly="false"><cfexit>
 </cfif>
 
+<!--- ACF & Lucee require a different approach to retrieve the proper order and case of columns in a query --->
 <cfset VARIABLES.isLucee = structKeyExists(SERVER, "lucee")>
+
+<!---
+	ACF ≤ 11 uses legacy ESAPI encoder that cannot handle all codepoints properly,
+	so we prefer htmlEditFormat() over encodeForHtml() for these versions
+--->
+<cfset VARIABLES.useLegacyEncoder = (listFirst(SERVER.ColdFusion.ProductVersion) lte 11)>
 
 <!--- BEGIN: attributes --->
 
@@ -345,12 +352,12 @@
 				<div class="row">
 					<div class="rowcell">
 						<cfif ATTRIBUTES.pre>
-							<pre><cfif VARIABLES.isLucee>#encodeForHtml(ARGUMENTS.var)#<cfelse>#htmlEditFormat(ARGUMENTS.var)#</cfif></pre>
+							<pre><cfif VARIABLES.useLegacyEncoder>#htmlEditFormat(ARGUMENTS.var)#<cfelse>#encodeForHtml(ARGUMENTS.var)#</cfif></pre>
 						<cfelse>
-							<cfif VARIABLES.isLucee>
-								#encodeForHtml(ARGUMENTS.var)#
-							<cfelse>
+							<cfif VARIABLES.useLegacyEncoder>
 								#htmlEditFormat(ARGUMENTS.var)#
+							<cfelse>
+								#encodeForHtml(ARGUMENTS.var)#
 							</cfif>
 						</cfif>
 					</div>
@@ -1322,11 +1329,10 @@
 							<div class="row">
 
 								<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="rowheader #LOCAL.cssClass#">
-									<!--- ACF uses legacy ESAPI that cannot handle all codepoints properly --->
-									<cfif VARIABLES.isLucee>
-										#encodeForHtml(LOCAL.printedKey)#
-									<cfelse>
+									<cfif VARIABLES.useLegacyEncoder>
 										#htmlEditFormat(LOCAL.printedKey)#
+									<cfelse>
+										#encodeForHtml(LOCAL.printedKey)#
 									</cfif>
 								</div>
 
