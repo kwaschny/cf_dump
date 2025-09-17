@@ -74,6 +74,29 @@
 	</cfif>
 	<cfparam name="ATTRIBUTES.byteMax" type="numeric" default="1024">
 
+	<!--- compact --->
+	<cfif not structKeyExists(ATTRIBUTES, "compact")>
+
+		<cfif (
+			structKeyExists(REQUEST, "__cf_dump_compact") and
+			isBoolean(REQUEST["__cf_dump_compact"])
+		)>
+			<cfset ATTRIBUTES.compact = REQUEST["__cf_dump_compact"]>
+
+		<cfelseif (
+			structKeyExists(ATTRIBUTES, "var") and
+			(
+				isQuery(ATTRIBUTES.var) or
+				isXmlDoc(ATTRIBUTES.var)
+			)
+		)>
+			<cfparam name="ATTRIBUTES.compact" type="boolean" default="true">
+		<cfelse>
+			<cfparam name="ATTRIBUTES.compact" type="boolean" default="false">
+		</cfif>
+
+	</cfif>
+
 	<!--- embed --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "embed")) and
@@ -175,7 +198,7 @@
 			<cfset REQUEST["__cf_dump_head"] = true>
 
 			<style>
-				.cf_dump{background-color:##fff;border-spacing:0;box-sizing:border-box;color:##000;display:table;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump pre{margin:0}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;width:100%}.cf_dump .var .rowheader.whitespace::before,.cf_dump .var.whitespace .colheader::before{content:'⚠️'}.cf_dump .var .rowheader.whitespace,.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
+				.cf_dump{background-color:##fff;border-spacing:0;box-sizing:border-box;color:##000;display:table;font-family:'Segoe UI',sans-serif;font-size:14px;margin-bottom:8px;margin-top:8px}.cf_dump div{box-sizing:border-box;font-size:inherit}.cf_dump pre{margin:0}.cf_dump .lowkey{color:##a0a0a0}.cf_dump .empty{white-space:nowrap}.cf_dump .label{background-color:##e91e63;color:##fff;padding:4px}.cf_dump .var{border-collapse:collapse;display:table;min-width:32px;width:100%}.cf_dump .var .rowheader.whitespace::before,.cf_dump .var.whitespace .colheader::before{content:'⚠️'}.cf_dump .var .rowheader.whitespace,.cf_dump .var.whitespace .rowcell{color:##f00000;font-family:Consolas,monospace;letter-spacing:1px}.cf_dump .var.array>.colheader{background-color:##090;border-color:##090;color:##fff}.cf_dump .var.array>.row>.rowheader{background-color:##cfc;border-color:##090;color:##090}
 				.cf_dump .var.array>.row>.rowcell{border-color:##090}.cf_dump .var.boolean>.colheader{background-color:##673ab7;border-color:##673ab7;color:##fff}.cf_dump .var.boolean>.row>.rowcell{border-color:##673ab7}.cf_dump .var.byte>.colheader{background-color:##fc4;border-color:##fc4;color:##000}.cf_dump .var.byte>.row>.rowcell{border-color:##fc4}.cf_dump .var.component>.colheader{background-color:##1c434a;border-color:##1c434a;color:##b6dce3}.cf_dump .var.component>.row>.rowheader{background-color:##b6dce3;border-color:##1c434a;color:##1c434a}.cf_dump .var.component>.row>.rowcell{border-color:##1c434a}.cf_dump .var.exception>.colheader{background-color:##000;border-color:##000;color:##ffff80}
 				.cf_dump .var.exception>.row>.rowheader{background-color:##ffff80;border-color:##000;color:##000}.cf_dump .var.exception>.row>.rowcell{border-color:##000}.cf_dump .var.null>.colheader{background-color:##000;border-color:##000;color:##fff}.cf_dump .var.null>.row>.rowcell{border-color:##000}.cf_dump .var.numeric>.colheader{background-color:##2196f3;border-color:##2196f3;color:##fff}.cf_dump .var.numeric>.row>.rowcell{border-color:##2196f3}.cf_dump .var.object>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.object>.row>.rowheader{background-color:##ffdbdb;border-color:##f44;color:##f44}.cf_dump .var.object>.row>.rowcell{border-color:##f44}.cf_dump .var.query>.colheader{background-color:##a6a;border-color:##a6a;color:##fff}
 				.cf_dump .var.query>.colfooter{border-color:##a6a}.cf_dump .var.query>.row>.rowheader{background-color:##fdf;border-color:##a6a;color:##a6a}.cf_dump .var.query>.row>.rowcell{border-color:##a6a}.cf_dump .var.simple>.colheader{background-color:##f44;border-color:##f44;color:##fff}.cf_dump .var.simple>.row>.rowcell{border-color:##f44}.cf_dump .var.string>.colheader{background-color:##ff8000;border-color:##ff8000;color:##fff}.cf_dump .var.string>.row>.rowcell{border-color:##ff8000}.cf_dump .var.struct>.colheader{background-color:##44c;border-color:##44c;color:##fff}.cf_dump .var.struct>.row>.rowheader{background-color:##cdf;border-color:##44c;color:##44c}.cf_dump .var.struct>.row>.rowcell{border-color:##44c}
@@ -219,8 +242,9 @@
 
 <cffunction name="renderDump" accessor="private" output="true" returnType="void">
 
-	<cfargument name="var"   type="any"     required="false">
-	<cfargument name="depth" type="numeric" default="-1">
+	<cfargument name="var"     type="any"     required="false">
+	<cfargument name="depth"   type="numeric" default="-1">
+	<cfargument name="compact" type="boolean" default="false">
 
 	<cfset ARGUMENTS.depth++>
 
@@ -317,7 +341,7 @@
 					<cfelse>
 
 						<cfset LOCAL.cssClass &= " lowkey empty">
-						<cfset ARGUMENTS.var   = "[empty string]">
+						<cfset ARGUMENTS.var   = ( ARGUMENTS.compact ? " " : "[empty string]" )>
 
 					</cfif>
 
@@ -346,9 +370,13 @@
 			</cfswitch>
 
 			<div <cfif len(LOCAL.title)>title="#encodeForHtmlAttribute(LOCAL.title)#"</cfif> class="var #LOCAL.cssClass#">
+
 				<div class="col colheader">
-					<span class="type">#encodeForHtml(LOCAL.type)#</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
+					<cfif not ARGUMENTS.compact>
+						<span class="type">#encodeForHtml(LOCAL.type)#</span> <span class="subtype">#encodeForHtml(LOCAL.subType)#</span>
+					</cfif>
 				</div>
+
 				<div class="row">
 					<div class="rowcell">
 						<cfif ATTRIBUTES.pre>
@@ -1084,54 +1112,66 @@
 							#renderDump(ARGUMENTS.var.XmlName, ARGUMENTS.depth)#
 						</div>
 					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlNsPrefix
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlNsPrefix)>
+						<div class="row">
+							<div class="rowheader">
+								XmlNsPrefix
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlNsURI)>
+						<div class="row">
+							<div class="rowheader">
+								XmlNsURI
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlNsURI
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len( trim(ARGUMENTS.var.XmlText) )>
+						<div class="row">
+							<div class="rowheader">
+								XmlText
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlComment)>
+						<div class="row">
+							<div class="rowheader">
+								XmlComment
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlText
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or (not structIsEmpty(ARGUMENTS.var.XmlAttributes))>
+						<div class="row">
+							<div class="rowheader">
+								XmlAttributes
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+						</cfif>
+					<cfif (not ATTRIBUTES.compact) or (not arrayIsEmpty(ARGUMENTS.var.XmlChildren))>
+						<div class="row">
+							<div class="rowheader">
+								XmlChildren
+							</div>
+							<div class="rowcell">
+								#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlComment
-						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
-						</div>
-					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlAttributes
-						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
-						</div>
-					</div>
-					<div class="row">
-						<div class="rowheader">
-							XmlChildren
-						</div>
-						<div class="rowcell">
-							#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
-						</div>
-					</div>
+					</cfif>
 				</div>
 
 			</cfif>
@@ -1430,7 +1470,7 @@
 							</div>
 							<cfloop array="#LOCAL.columns#" index="LOCAL.column">
 								<div data-cf_dump_querycell="#encodeForHtmlAttribute(LOCAL.column)#" class="rowcell" style="width: #LOCAL.columnWidth#%;">
-									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth, ATTRIBUTES.compact)#
 								</div>
 							</cfloop>
 						</div>

@@ -61,12 +61,12 @@
 		<cf_dump var="#structF#">
 
 		<h2>xml</h2>
-		<cf_dump var="#xmlDoc#">
+		<cf_dump compact="false" var="#xmlDoc#">
 
 		<h2>query</h2>
-		<cf_dump var="#queryE#">
-		<cf_dump var="#queryC#">
-		<cf_dump var="#queryF#">
+		<cf_dump compact="false" var="#queryE#">
+		<cf_dump compact="false" var="#queryC#">
+		<cf_dump compact="false" var="#queryF#">
 
 		<h2>component</h2>
 		<cf_dump var="#componentA#">
@@ -164,6 +164,14 @@
 
 		<h2>query</h2>
 		<cf_dump top="2" var="#z#">
+
+	<h1>compact</h1>
+
+		<h2>query (implicit)</h2>
+		<cf_dump var="#queryF#">
+
+		<h2>xml (implicit)</h2>
+		<cf_dump var="#xmlDoc#">
 
 	<h1>break long strings</h1>
 

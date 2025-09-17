@@ -38,6 +38,7 @@
 	.cf_dump .var {
 		border-collapse: collapse;
 		display: table;
+		min-width: 32px;
 		width: 100%;
 	}
 		.cf_dump .var .rowheader.whitespace::before,

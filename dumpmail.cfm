@@ -74,6 +74,29 @@
 	</cfif>
 	<cfparam name="ATTRIBUTES.byteMax" type="numeric" default="1024">
 
+	<!--- compact --->
+	<cfif not structKeyExists(ATTRIBUTES, "compact")>
+
+		<cfif (
+			structKeyExists(REQUEST, "__cf_dump_compact") and
+			isBoolean(REQUEST["__cf_dump_compact"])
+		)>
+			<cfset ATTRIBUTES.compact = REQUEST["__cf_dump_compact"]>
+
+		<cfelseif (
+			structKeyExists(ATTRIBUTES, "var") and
+			(
+				isQuery(ATTRIBUTES.var) or
+				isXmlDoc(ATTRIBUTES.var)
+			)
+		)>
+			<cfparam name="ATTRIBUTES.compact" type="boolean" default="true">
+		<cfelse>
+			<cfparam name="ATTRIBUTES.compact" type="boolean" default="false">
+		</cfif>
+
+	</cfif>
+
 	<!--- embed --->
 	<cfif (
 		(not structKeyExists(ATTRIBUTES, "embed")) and
@@ -193,8 +216,9 @@
 
 <cffunction name="renderDump" accessor="private" output="true" returnType="void">
 
-	<cfargument name="var"   type="any"     required="false">
-	<cfargument name="depth" type="numeric" default="-1">
+	<cfargument name="var"     type="any"     required="false">
+	<cfargument name="depth"   type="numeric" default="-1">
+	<cfargument name="compact" type="boolean" default="false">
 
 	<cfset ARGUMENTS.depth++>
 
@@ -209,7 +233,7 @@
 			<cfset LOCAL.cssDeepColor = "##000000">
 			<cfset LOCAL.cssForeColor = "##FFFFFF">
 
-			<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; font-size: inherit; width: 100%; white-space: nowrap;">
+			<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0; font-size: inherit; white-space: nowrap;">
 				<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 					<span style="font-weight: bold;">null</span>
 				</div>
@@ -301,7 +325,7 @@
 					<cfelse>
 
 						<cfset LOCAL.cssInline = "color: ##A0A0A0; white-space: nowrap;">
-						<cfset ARGUMENTS.var   = "[empty string]">
+						<cfset ARGUMENTS.var   = ( ARGUMENTS.compact ? " " : "[empty string]" )>
 
 					</cfif>
 
@@ -330,7 +354,9 @@
 			<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; #LOCAL.cssInline#">
 				<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 					<cfif LOCAL.showAlert>⚠️</cfif>
-					<span style="font-weight: bold;">#encodeForHtml(LOCAL.type)#</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span>
+					<cfif not ARGUMENTS.compact>
+						<span style="font-weight: bold;">#encodeForHtml(LOCAL.type)#</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span>
+					</cfif>
 				</div>
 				<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
 					<div style="border: 1px solid; border-top: 0; border-color: #LOCAL.cssDeepColor#; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top; #( (LOCAL.rawType eq "java.lang.String") ? "word-break: break-all;" : "" )# #( LOCAL.showAlert ? "color: ##F00000; font-family: Consolas, monospace; letter-spacing: 1px;" : "" )#">
@@ -360,7 +386,7 @@
 
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">array</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span>
 					</div>
@@ -375,7 +401,7 @@
 
 				<cfset VARIABLES.resolvedVars[LOCAL.identity] = LOCAL.subType>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%; white-space: nowrap;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0; white-space: nowrap;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">array [0]</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
@@ -393,7 +419,7 @@
 				<cfset isByteArray = (LOCAL.subType eq "[B")>
 				<cfset showValues  = ((not isByteArray) or (LOCAL.len lte ATTRIBUTES.byteMax))>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">array [#LOCAL.len#]</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
@@ -494,7 +520,7 @@
 
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
-					<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%;">
+					<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0;">
 						<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 							<span style="font-weight: bold;">component</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.meta.FullName)#</span>
 						</div>
@@ -583,7 +609,7 @@
 
 					<!--- END: private fields --->
 
-					<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+					<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 
 						<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 							<span style="font-weight: bold;">component</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.meta.FullName)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span><br>
@@ -699,7 +725,7 @@
 
 				<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
-					<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%;">
+					<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0;">
 						<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 							<cfif len(LOCAL.docsLink)>
 								<span style="font-weight: bold;">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" style="color: inherit; font-size: 9px; text-decoration: none;">#encodeForHtml(LOCAL.subType)#</a>
@@ -742,7 +768,7 @@
 							"ExtendedInfo"
 						]>
 
-						<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+						<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 							<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 								ColdFusion Exception
 							</div>
@@ -846,7 +872,7 @@
 							"ExtendedInfo"
 						]>
 
-						<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+						<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 							<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 								Java Exception
 							</div>
@@ -995,7 +1021,7 @@
 
 						<!--- END: prepare methods --->
 
-						<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+						<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 							<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 								<cfif len(LOCAL.docsLink)>
 									<span style="font-weight: bold;">object</span> <a href="#encodeForHtmlAttribute(docsLink)#" target="_blank" rel="noopener noreferrer" style="color: inherit; font-size: 9px; text-decoration: none;">#encodeForHtml(LOCAL.subType)#</a> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
@@ -1062,7 +1088,7 @@
 
 			<cfif isXmlDoc(ARGUMENTS.var)>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">XmlDocument</span> <span style="font-size: 9px;"></span>
 					</div>
@@ -1075,7 +1101,7 @@
 
 			<cfelse>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">#( isXmlRoot(ARGUMENTS.var) ? "XmlRoot" : "XmlNode" )#</span>
 					</div>
@@ -1087,54 +1113,66 @@
 							#renderDump(ARGUMENTS.var.XmlName, ARGUMENTS.depth)#
 						</div>
 					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlNsPrefix
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlNsPrefix)>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlNsPrefix
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlNsPrefix, ARGUMENTS.depth)#
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlNsURI)>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlNsURI
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlNsURI
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len( trim(ARGUMENTS.var.XmlText) )>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlText
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlNsURI, ARGUMENTS.depth)#
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or len(ARGUMENTS.var.XmlComment)>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlComment
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlText
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or (not structIsEmpty(ARGUMENTS.var.XmlAttributes))>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlAttributes
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
+							</div>
 						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlText, ARGUMENTS.depth)#
+					</cfif>
+					<cfif (not ATTRIBUTES.compact) or (not arrayIsEmpty(ARGUMENTS.var.XmlChildren))>
+						<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
+							<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
+								XmlChildren
+							</div>
+							<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
+								#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
+							</div>
 						</div>
-					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlComment
-						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlComment, ARGUMENTS.depth)#
-						</div>
-					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlAttributes
-						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlAttributes, ARGUMENTS.depth)#
-						</div>
-					</div>
-					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
-						<div style="background-color: #LOCAL.cssSoftColor#; border: 1px solid #LOCAL.cssDeepColor#; border-right: 0; border-top: 0; box-sizing: border-box; color: #LOCAL.cssDeepColor#; display: table-cell; padding: 2px 4px; vertical-align: top; width: 1%;">
-							XmlChildren
-						</div>
-						<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
-							#renderDump(ARGUMENTS.var.XmlChildren, ARGUMENTS.depth)#
-						</div>
-					</div>
+					</cfif>
 				</div>
 
 			</cfif>
@@ -1145,7 +1183,7 @@
 			<!--- top (maximum depth) --->
 			<cfif (ATTRIBUTES.top gte 0) and (ARGUMENTS.depth gt ATTRIBUTES.top)>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0;">
 					<div style="box-sizing: border-box; display: table-row; font-size: inherit;">
 						<div style="border: 1px solid; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top;">
 							[top reached]
@@ -1167,7 +1205,7 @@
 
 			<cfif structKeyExists(VARIABLES.resolvedVars, LOCAL.identity)>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">struct</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span>
 					</div>
@@ -1180,7 +1218,7 @@
 
 			<cfelseif not LOCAL.len>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; white-space: nowrap; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0; white-space: nowrap;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">struct [0]</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
 					</div>
@@ -1213,7 +1251,7 @@
 						"StackTrace"
 					]>
 
-					<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+					<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 						<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; font-weight: bold; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 							Lucee Exception
 						</div>
@@ -1311,7 +1349,7 @@
 
 					<cfset LOCAL.showAlert = false>
 
-					<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+					<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 
 						<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 							<span style="font-weight: bold;">struct [#LOCAL.len#]</span> <span style="font-size: 9px;">#encodeForHtml(LOCAL.subType)#</span> <span style="opacity: 0.50;">@#encodeForHtml(LOCAL.identity)#</span>
@@ -1402,7 +1440,7 @@
 
 			<cfif LOCAL.len>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; min-width: 32px; width: 100%;">
 
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">query [#LOCAL.len#]</span>
@@ -1447,7 +1485,7 @@
 							</div>
 							<cfloop array="#LOCAL.columns#" index="LOCAL.column">
 								<div style="border: 1px solid #LOCAL.cssDeepColor#; border-top: 0; box-sizing: border-box; display: table-cell; padding: 2px; vertical-align: top; width: #LOCAL.columnWidth#%;">
-									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth)#
+									#renderDump(ARGUMENTS.var[LOCAL.column][ARGUMENTS.var.currentRow], ARGUMENTS.depth, ATTRIBUTES.compact)#
 								</div>
 							</cfloop>
 						</div>
@@ -1458,7 +1496,7 @@
 
 			<cfelse>
 
-				<div style="border-collapse: collapse; box-sizing: border-box; color: ##A0A0A0; display: table; white-space: nowrap; width: 100%;">
+				<div style="border-collapse: collapse; box-sizing: border-box; display: table; width: 100%; color: ##A0A0A0; white-space: nowrap;">
 					<div style="background-color: #LOCAL.cssDeepColor#; border: 1px solid #LOCAL.cssDeepColor#; box-sizing: border-box; color: #LOCAL.cssForeColor#; display: table-caption; font-size: 11px; letter-spacing: 1px; padding: 1px 2px 2px 2px; white-space: nowrap;">
 						<span style="font-weight: bold;">query [0]</span>
 					</div>

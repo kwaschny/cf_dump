@@ -255,6 +255,15 @@ Limit the number of keys and rows to display. This is handy if you have large da
 
 ![](screenshots/top.png)
 
+### compact
+
+Keep the output as compact as possible by omitting meta information. Default: `false` (`true` if you pass a Query or XML Document in `var`)
+
+| type  | effect                                                 |
+| ----- | ------------------------------------------------------ |
+| Query | hide type meta text and show `[empty string]` as blank |
+| XML   | hide fields of nodes that are empty                    |
+
 ### pre
 
 Preserve whitespaces in strings when displaying the dump. Default: `false`
